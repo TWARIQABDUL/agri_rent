@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "928210968988",
+    "project_id": "agri-rent-66546",
+    "storage_bucket": "agri-rent-66546.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928210968988:android:6f950d0fcbc8a0985f6859",
+        "android_client_info": {
+          "package_name": "com.example.agri_rent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_jQL08QW02ZjjwBsq8UgvmVRA1goP7bQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
