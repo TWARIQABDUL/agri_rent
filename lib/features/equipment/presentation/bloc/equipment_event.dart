@@ -10,9 +10,14 @@ abstract class EquipmentEvent extends Equatable {
 class FetchEquipmentEvent extends EquipmentEvent {
   final String? category;
   final String? location;
+  final double? maxPrice;
 
-  const FetchEquipmentEvent({this.category, this.location});
+  const FetchEquipmentEvent({
+    this.category,
+    this.location,
+    this.maxPrice,
+  });
 
   @override
-  List<Object?> get props => [category, location];
+  List<Object?> get props => [category, location, maxPrice];
 }
