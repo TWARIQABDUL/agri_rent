@@ -20,11 +20,18 @@ class EquipmentBloc extends Bloc<EquipmentEvent, EquipmentState> {
           GetEquipmentParams(category: event.category),
         );
         
-        // Client-side filtering for location (as requested for Phase 1)
+        // Client-side filtering for location and price
         List<Equipment> filteredList = equipmentList;
-        if (event.location != null && event.location!.isNotEmpty) {
-          filteredList = equipmentList
+        
+        if (event.location != null && event.location!.isNotEmpty && event.location != 'Anywhere') {
+          filteredList = filteredList
               .where((e) => e.location.toLowerCase().contains(event.location!.toLowerCase()))
+              .toList();
+        }
+        
+        if (event.maxPrice != null) {
+          filteredList = filteredList
+              .where((e) => e.pricePerDay <= event.maxPrice!)
               .toList();
         }
 

@@ -6,6 +6,7 @@ import '../widgets/active_rental_banner.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/custom_bottom_nav.dart';
 import '../widgets/equipment_card.dart';
+import '../widgets/filter_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +18,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedCategoryIndex = 0;
   int _currentNavIndex = 0;
+
+  // Filter States
+  String _currentLocationFilter = 'Anywhere';
+  double _currentMaxPriceFilter = 100000.0;
 
   final List<Map<String, String>> _categories = [
     {'label': 'All', 'icon': '🗂️'},
@@ -38,7 +43,45 @@ class _HomePageState extends State<HomePage> {
     });
     
     final category = _categories[index]['label'];
-    context.read<EquipmentBloc>().add(FetchEquipmentEvent(category: category));
+    context.read<EquipmentBloc>().add(FetchEquipmentEvent(
+      category: category,
+      location: _currentLocationFilter,
+      maxPrice: _currentMaxPriceFilter,
+    ));
+  }
+
+  void _openFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: FilterBottomSheet(
+            initialCategory: _categories[_selectedCategoryIndex]['label'],
+            initialLocation: _currentLocationFilter,
+            initialMaxPrice: _currentMaxPriceFilter,
+            onApply: (category, location, maxPrice) {
+              setState(() {
+                _selectedCategoryIndex = _categories.indexWhere((c) => c['label'] == category);
+                if (_selectedCategoryIndex == -1) _selectedCategoryIndex = 0;
+                _currentLocationFilter = location;
+                _currentMaxPriceFilter = maxPrice;
+              });
+
+              context.read<EquipmentBloc>().add(FetchEquipmentEvent(
+                category: category,
+                location: location,
+                maxPrice: maxPrice,
+              ));
+            },
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -108,11 +151,15 @@ class _HomePageState extends State<HomePage> {
                             ),
                             child: TextField(
                               onChanged: (value) {
+                                setState(() {
+                                  _currentLocationFilter = value.isEmpty ? 'Anywhere' : value;
+                                });
                                 // Add location filter based on search input
                                 final category = _categories[_selectedCategoryIndex]['label'];
                                 context.read<EquipmentBloc>().add(FetchEquipmentEvent(
                                   category: category,
-                                  location: value,
+                                  location: _currentLocationFilter,
+                                  maxPrice: _currentMaxPriceFilter,
                                 ));
                               },
                               decoration: const InputDecoration(
@@ -126,13 +173,16 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryDark,
-                            borderRadius: BorderRadius.circular(16),
+                        GestureDetector(
+                          onTap: _openFilterSheet,
+                          child: Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryDark,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(Icons.tune, color: AppColors.white),
                           ),
-                          child: const Icon(Icons.tune, color: AppColors.white),
                         ),
                       ],
                     ),
