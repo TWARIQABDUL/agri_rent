@@ -1,0 +1,948 @@
+Date : 4/June/2026
+Course : Mobile Application Development
+Group members :
+1.​ Twariki Abdalazizi
+2.​ Keza Cynthia
+3.​ Leny Pascal IHIRWE
+4.​ Mwizera Amen Gisele
+5.​ Seth Abijuru
+Team Contribution:
+BSE Group Assignments : Task Sheet_[Mobile Application Development_Assignment …
+
+Farming Equipment Rental Platform
+
+Mission Introduction
+Our project sits in agriculture, which is the base Rwanda's economy is built on. Farming
+brings in about a third of the country's GDP and employs more people than any other sector,
+and roughly three quarters of what the country grows comes from smallholder farmers [1],
+[2]. Yet most of those farmers still prepare and harvest their land by hand or with old tools. A
+tractor, an irrigation pump, or a harvester costs far more than an ordinary rural household can
+put together.
+AgriRent is a mobile app that links farmers who need equipment to the owners and
+cooperatives who have it. Today a farmer chases equipment through phone calls and
+neighbours and whatever they hear secondhand. With the app, that same farmer opens it, sees
+verified equipment nearby, checks prices and ratings, and books it for the exact days they
+need. We want to take the informal sharing that already happens, slow and patchy as it is, and
+make it a clear local marketplace that runs on a basic smartphone.
+
+This is worth fixing because two things ride on it: what a family earns, and whether it has
+enough to eat. Miss a planting or harvesting window because no machine showed up in time,
+and the yield falls, and that lost money is gone until the next season comes around. When
+equipment is easy to find, price, and book, a farmer can move during the short window that
+decides how the season goes. The idea also fits what Rwanda is already aiming for in Vision
+2050 and the National Strategy for Transformation (NST2), both of which push farming away
+from subsistence and toward commercial, tech-driven, increasingly digital work [1].
+
+2. Literature Review
+
+2.1 Problem Context
+
+AgriRent deals with one main problem: African smallholder farmers have very little access to
+machines, and no organised, trustworthy way to get hold of one when the work needs doing.
+Most research agrees that mechanisation lifts yields, eases the labour burden, and gets
+planting and harvesting done faster. The trouble is that it stays out of reach for most
+smallholders, who make up the bulk of farmers in Rwanda and across the continent [3], [5].
+So the cycle keeps turning. Farmers lean on manual labour, output stays low, and incomes
+never get steady.
+
+2.2 Evidence
+
+The numbers behind the mechanisation gap are hard to argue with. The FAO puts Africa at
+fewer than two tractors for every 1,000 hectares of cropland, while South Asia and Latin
+America sit at about ten per 1,000 hectares [3]. One industry analysis sets the continent at
+roughly eight tractors per 100 km² of arable land, well under the global average [6]. The
+knock-on effect is that an estimated 65% of African smallholders still do the core jobs, land
+preparation among them, by hand [5].
+
+The squeeze comes from both sides of the market. Tractor owners often do not want to serve
+places where the farms are small and spread out, since it costs a lot to reach them. And when
+a machine is around, a smallholder with little bargaining power runs a real risk of getting
+served late, or of depending on one of only a few owners [3], [4]. Money is the other wall. In
+most African countries fewer than 10% of farmers can get a formal agricultural loan, so
+buying a machine outright is not realistic for an ordinary household [6]. If you cannot own,
+you need a dependable way to hire.
+Digital and mobile tools have already shown they can close part of the gap. Rental and
+sharing platforms help smallholders by keeping existing machines busier and putting owners
+in touch with demand they would never have found by word of mouth [4]. The region has
+live examples. Hello Tractor says it has served close to 200,000 smallholder farmers through
+a digital tractor-sharing model and a fleet of several thousand machines [5]. Zoom out and the
+pattern holds: digital agriculture solutions across low- and middle-income countries went
+from about 152 in 2013 to around 1,400 in 2023, which says a lot about both the demand and
+the scramble to meet it [7].
+
+2.3 Gap Identification
+
+Two gaps stand out. The first is range. A lot of the platforms that exist are built for tractors
+and for bigger or commercial farms, which leaves out the irrigation pumps, sprayers,
+harvesters, and small tools that smallholders actually reach for. The second is depth. The
+count of digital agriculture solutions has shot up, but most stay small, and a common
+complaint is that they brag about "registered farmers" instead of people who actually keep
+using them. That usually means the tool is too fiddly, or it does not fit how a rural farmer
+really works [7]. What is still missing is a simple, community-based platform that shows
+clear local prices, real availability, and owner ratings for many kinds of equipment in one
+place. AgriRent is built to be exactly that, taking the local sharing system that farmers already
+trust but that wastes their time, and turning it into a clear mobile booking marketplace made
+for low-resource, low-data settings.
+
+3. Problem Statement and Hypothesis Statement
+
+3.1 Problem Statement
+
+Smallholder farmers in rural Rwanda grow much of the country's food, but they have no
+structured, transparent, and timely way to find, rent, and book the equipment near them.
+Owning a machine costs too much, and the fallback, asking around by word of mouth, leaves
+them with unclear prices, no certainty about what is free, and no record they can use to judge
+who to trust. Many end up back at manual labour and miss the planting and harvesting
+windows that matter most [3], [5], [6].
+
+3.2 Hypothesis Statement
+
+Our claim is this: a simple, low-data mobile platform that connects farmers with nearby
+owners and cooperatives, and that shows real availability, honest prices, and verified owner
+ratings, will cut both the time and the guesswork involved in getting equipment, and will
+raise the share of tasks that participating farmers finish on time. We expect this because
+digital rental and sharing models have already been shown to widen smallholder access, by
+keeping machines in use and linking owners to demand close by [4], [5].
+
+User Interview Plan
+1.​ Targeted Participants
+●​ Farmers - Primary users
+●​ Equipment Owners - People who own tractors,irrigation pumps,sprayers..etc
+●​ Agricultural Cooperative Members
+2.​ Recruitment Plan
+Participants will be recruited through local farming communities, agricultural
+cooperatives, personal networks and referrals from interviewed farmers. The study
+
+aims to include individuals with different farming experiences and varying levels of
+access to agricultural equipment in order to obtain diverse perspectives on the
+challenges associated with equipment access and rentals .
+3.​ Interview Consent Script
+Thank you for agreeing to participate in this interview. We are doing research for an
+academic project focused on improving access to farming equipment through digital
+solutions. Your participation is voluntary and your responses will be used only for
+research purposes with your permission. We would like to take notes or record the
+interview for accuracy.
+4.​ Interview Questions
+●​ Background
+●​ Current Experience
+●​ Pain Points
+●​ Existing Solutions
+●​ Needs and Opportunities
+5.​ What to record in the interviews
+●​ Behaviors - Actions and habits people use when trying to solve their problems.
+●​ Emotions - Feelings users experience while dealing with problems.
+We conducted the first stage of interviews through a short survey and online screening form
+to identify potential users and understand their farming equipment needs. The survey asked
+about the respondent’s role, location, equipment needed, current method of finding
+equipment, main challenges, phone usage, and willingness to use a farming equipment rental
+app.
+Survey link:
+https://docs.google.com/forms/d/e/1FAIpQLSdTdFIoAeQepnyjX55nqspjV1qOzLzGY1Nshl
+LJclseRRKc0Q/viewform?usp=header​
+​
+Interviews conducted: ​
+https://drive.google.com/drive/folders/18N0LQOITGkXpd1TYd23ivKicSb5dhM3D?usp=sha
+ring
+
+Information Architecture
+We built AgriRent as a single app with one dashboard that changes depending on whether
+you sign in as a farmer or an owner. A bottom tab bar stays on screen the whole time, so
+people can move between the main areas without losing their place.
+
+Onboarding & Auth
+Splash Screen->Registration / Login->Role Selection(Farmer, Rental)
+
+Home (Main Dashboard)
+Farmer: Search bar, category quick-links (Tractors, Pumps, Harvesters), “Nearby
+Equipment", "Active Rentals" widget.
+Owner: Earnings summary, active requests, "Add New Equipment" CTA.
+
+Search & Explore:
+​
+
+Filters: Date availability, equipment type, price range, distance.
+
+​
+
+Equipment Detail Page: Photos, specs, pricing (per hour/day/hectare), owner rating,
+
+"Request to Rent" button.
+
+Bookings / Activity
+​
+
+Pending Requests, Active Rentals (includes tracking or status updates) History &
+
+Reviews
+Messages​
+​
+
+Inbox (Direct communication between farmer and owner to coordinate logistics)
+
+Profile & Settings
+​
+
+Payments,Personal Details & Verification, Switch Role (Toggle between
+
+Farmer/Owner), Support/Help
+
+Competitor Analysis
+Hello Tractor is a direct competitor. It connects tractor owners with smallholder farmers
+through a digital sharing system, and it uses GPS and fleet tools so owners can track their
+machines and reach farmers who need them [9]. Its own site says the marketplace has served
+over 2.5 million smallholder farmers and works with thousands of equipment owners, which
+tells us the demand for digital equipment access is real [8].
+TROTRO Tractor is another direct competitor. Farmers can request, schedule, and prepay
+for tractor work from either a feature phone or a smartphone, which is close to what we are
+doing, getting smallholders better access to machines over mobile [11]. It also lets owners
+keep an eye on their tractors from a distance through GPS trackers, USSD, and apps [11].
+EM3 AgriServices sits further from us, so we treat it as an indirect competitor. It also widens
+access to costly equipment, but it runs as farming-as-a-service rather than a local rental
+marketplace. Farmers pay per use for high-end technology, and EM3 backs them with an app,
+call centres, and human reps, which helps people who are not always online [12].
+Trringo is indirect too. It lets farmers use tractors and equipment without buying them, but it
+works mostly in India, not Africa. It runs on a mobile app, a call centre, and a franchise
+network that links farmers to machines on a pay-per-use basis. That is where our opening is:
+we can build for African farmers and local owners, and lean on community renting in a way
+Trringo does not.
+Competitor
+
+Type
+
+Strengths
+
+Weaknesses / Gaps
+
+Opportunity for Our
+App
+
+Hello Tractor
+
+Direct
+
+Strong
+
+May feel advanced for
+
+Create a simpler
+
+tractor-sharing
+
+farmers who need a
+
+community-based app
+
+model, GPS
+
+very simple local tool
+
+with clear prices and
+
+tracking, large
+
+local availability
+
+farmer network
+TROTRO
+Tractor
+
+EM3
+AgriServices
+
+Direct
+
+Allows farmers to
+
+Mainly focused on
+
+Add more equipment
+
+request, schedule,
+
+tractor and machinery
+
+types such as irrigation
+
+and prepay for
+
+services in specific
+
+pumps, harvesters, and
+
+tractor services
+
+markets
+
+small tools
+
+Indirect Provides farming
+
+More service-center
+
+Build a flexible platform
+
+equipment access
+
+based and less like a
+
+where local owners can
+
+through pay-per-use
+
+local peer-to-peer
+
+list their own equipment
+
+services
+
+marketplace
+
+Word of
+
+Indirect Familiar and trusted
+
+Slow, unclear prices,
+
+Turn the existing local
+
+mouth
+
+by farmers
+
+unreliable availability,
+
+trust system into a clear
+
+and no booking record
+
+mobile booking platform
+
+Mainly focused on
+
+Build a local African
+
+farm equipment
+
+India and uses a more
+
+equipment rental
+
+rental through
+
+franchise/service-based marketplace where
+
+app/call center
+
+model
+
+Trringo
+
+Indirect Provides tractor and
+
+booking
+
+nearby owners can list
+their own machines
+
+Competitor Screenshots / References
+For this section, add screenshots from the websites or pages listed below. Each screenshot
+should have a short caption under it.
+Screenshot 1: Hello Tractor website (https://hellotractor.com/)
+
+Hello Tractor shows a digital farming equipment-sharing model that connects farmers with tractor owners. It
+also uses GPS and fleet management, which helped us understand the importance of trust, tracking, and
+equipment visibility in our own platform [8], [9].
+
+Screenshot 2: TROTRO Tractor website (https://www.trotrotractor.com/)
+
+​
+TROTRO Tractor allows farmers to request, schedule, and prepay for tractor services using feature phones and
+smartphones. This influenced our idea to include equipment search, booking, availability, and payment
+confirmation features [11].
+
+Screenshot 3: EM3 AgriServices reference page (https://unreasonablegroup.com/)
+
+​
+EM3 AgriServices uses a farming-as-a-service model to give farmers access to expensive farming technology
+on a pay-per-use basis. This helped us compare our local marketplace idea with a more organized service-based
+model [12].
+
+Screenshot 4: Trringo (https://www.engineeringforchange.org/)​
+​
+
+Trringo provides tractor and farm equipment rental services through app and call center booking, mainly for
+farmers in India. This helped us compare our African-focused marketplace idea with a larger organized rental
+model that is not directly serving our target region.
+
+Plenty of farmers still rely on phone calls, neighbours, and word of mouth to track
+down equipment. It is familiar, but it does not work well, because there is no clear way
+to see prices, check what is available, or know who can be trusted.​
+
+User Journey Map
+Existing Solution Journey Map: Hello Tractor
+This journey map follows a farmer using Hello Tractor, or a platform much like it, to find and
+book equipment. We picked Hello Tractor because it is a direct competitor that links owners
+and farmers through an equipment-sharing platform and a GPS fleet system [9].
+Stage
+
+User Action
+
+Feeling
+
+Pain Point
+
+Improvement
+Opportunity for Our
+App
+
+Opens the
+
+The farmer opens
+
+app
+
+The user may not
+
+Use a simple
+
+the platform to
+
+know where to start if
+
+dashboard with clear
+
+search for
+
+the interface is
+
+equipment categories
+
+equipment
+
+complex
+
+Selects
+
+The farmer chooses
+
+equipment
+
+tractor or another
+
+category
+
+equipment type
+
+Hopeful
+
+Focused
+
+Some platforms focus
+
+Include tractors,
+
+mostly on tractors
+
+irrigation pumps,
+harvesters, and smaller
+tools
+
+Enters
+
+The farmer adds
+
+location
+
+their farm location
+
+Careful
+
+Rural locations may be Allow simple
+hard to enter correctly
+
+village-based search
+and nearby equipment
+suggestions
+
+Searches for
+
+The farmer checks
+
+equipment
+
+available equipment
+
+Anxious
+
+Availability may not
+
+Show real-time
+
+always be clear
+
+availability and
+
+nearby
+Views
+
+The farmer
+
+equipment
+
+booking dates
+Unsure
+
+Prices and distance
+
+Show price, distance,
+
+compares available
+
+may not be easy to
+
+owner rating, and
+
+list
+
+machines
+
+compare
+
+delivery option clearly
+
+Selects
+
+The farmer opens
+
+The farmer may still
+
+Add owner profile,
+
+equipment
+
+the equipment detail
+
+worry about trust
+
+reviews, equipment
+
+Interested
+
+page
+
+images, and usage
+details
+
+Requests to
+
+The farmer sends a
+
+rent
+
+rental request
+
+Checks out
+
+Nervous
+
+The user may not
+
+Add instant request
+
+know if the request is
+
+status and
+
+confirmed
+
+confirmation message
+
+The farmer confirms Careful
+
+Payment safety and
+
+Show total cost before
+
+the booking and
+
+hidden charges may be confirmation
+
+payment option
+
+a concern
+
+Gets result
+
+The request is either
+
+Relieved or Failure messages can
+
+Provide clear error
+
+successful or fails
+
+frustrated
+
+messages and allow
+
+confuse users
+
+because of
+
+the user to adjust
+
+availability or
+
+search quickly
+
+balance
+Owner is
+
+The equipment
+
+notified
+
+owner receives the
+
+Confident
+
+Poor communication
+
+Send automatic
+
+can delay service
+
+notifications to both
+
+booking request
+
+farmer and owner
+
+The map shows that platforms like this already get farmers to machinery, but the experience
+can still be simpler and more local. AgriRent improves on it with a plain dashboard, search
+options that make sense, prices the farmer can actually see, live availability, a booking
+confirmation, and an easy way to change the search when nothing comes up.
+
+Interview Summary
+We drew on responses from more than ten potential users: small-scale farmers, equipment
+owners, agriculture workers, one large-scale farmer, and one agriculture student. Most came
+from farming areas like Bugesera, Muhanga, Musanze, Ruhango, Gasabo, Kabuga, Ntunga,
+and Kigali.
+Most of them find equipment informally. Seven ask neighbours or friends, five go through
+local leaders or cooperatives, and four said they usually struggle to find it at all. The pattern
+is hard to miss: there is no reliable way to see what is actually free to use.
+The problems that came up most were equipment being hard to find nearby, high cost,
+unclear prices, late availability, weak trust, and trouble with transport. Seven said they would
+use a mobile app and three said maybe. So the demand is there, as long as the app stays
+simple and easy to trust.
+
+Empathy Map
+Aggregated Empathy Map (All Respondents)
+The map below brings together what all our respondents said. After it come three individual
+maps from key interviews. Each one uses the same four quadrants, Says, Thinks, Does, and
+Feels, and every entry is taken straight from that person’s interview notes.
+Says
+
+Thinks
+
+“I ask neighbors or local leaders when I
+
+“I need equipment on time or my farming work
+
+need equipment.”
+
+will delay.”
+
+“Equipment is hard to find nearby.”
+
+“The price and availability should be clear before I
+contact the owner.”
+
+“Sometimes I do not know who owns
+
+“A mobile app can help if it is simple and trusted.”
+
+equipment.”
+
+Does
+
+Calls equipment owners directly.
+
+Feels
+
+Frustrated when equipment is not available.
+
+Uses neighbors, friends, and cooperatives. Worried about high cost and unclear prices.
+
+Uses a smartphone or basic phone.
+
+Hopeful about a simple rental platform.
+
+Summary: Users need a platform that shows nearby equipment, clear prices, availability,
+owner details, and simple booking.
+
+Individual Empathy Maps (Key Interviews)
+Respondent R1 - Eric Habimana, Small-Scale Farmer (Bugesera)
+Says
+
+Thinks
+
+“I ask my neighbours or the local leader
+whenever I need a tractor.”
+“Most of the time the machine is hard to find
+when I actually need it.”
+
+If I do not plough on time, I will miss the
+planting window.
+I wish I could see the price before I start
+calling around.
+
+Does
+
+Feels
+
+Calls equipment owners and the cooperative
+directly.
+Uses a smartphone and would try a mobile
+app.
+Falls back on hand tools when no machine is
+free.
+
+Frustrated when equipment turns up late.
+Anxious about unclear cost and trust.
+Hopeful that a simple app could help.
+
+Respondent R2 - Yvonne Kayitesi, Equipment Owner (Kabuga)
+Says
+
+Thinks
+
+“Farmers usually reach me through the
+cooperative, not directly.”
+“My harvester sits idle for weeks at a time.”
+
+I could earn more if farmers knew my
+machine was free.
+I need to be sure I will actually get paid.
+
+Does
+
+Feels
+
+Shares availability by word of mouth.
+Sometimes uses a basic phone to coordinate.
+Waits for referrals from local leaders.
+
+Worried about payment and how far the
+machine must travel.
+Willing to try the app if it is simple.
+Keen for steady, paying demand.
+
+Respondent R3 - Belyse Kalisa, Basic-Phone Farmer (Muhanga)
+Says
+
+Thinks
+
+“I find equipment through neighbours and
+direct calls.”
+
+The app has to be very simple or I will not
+manage it.
+
+“The price is never clear before I commit.”
+
+Will the machine even reach my field on
+time?
+
+Does
+
+Feels
+
+Uses a basic phone, not a smartphone.
+Relies on the cooperative and direct calls.
+Arranges her own transport for the
+equipment.
+
+Unsure about new apps and low on data.
+Stressed by delivery and transport problems.
+Cautiously hopeful about an easy platform.
+
+Personas (3 Samples)
+Persona 1: Beracah Rachel
+
+​
+User segment: Digital agriculture / equipment access supporter​
+Demographics: Young professional, female, Kigali, Rwanda; connected to Farm Link.​
+Goals: Help farmers access farm equipment faster, reduce manual searching, and make rental
+information more trusted.​
+Frustrations: Farmers may not know where to find equipment, prices are not always clear,
+and trust between owners and renters can be weak.​
+Behaviors: Uses digital tools, checks information online, communicates through
+phone/WhatsApp, and values organized booking.​
+Environment: Works around Kigali but connects with farmers who may be in rural areas
+with mixed internet access.
+Justification: This persona represents the more digital and agriculture-connected user. The
+survey/interview insights about trust, equipment access, price clarity, and easier booking
+support her persona.
+
+Persona 2: MUKIZA SANAH
+
+​
+User segment: Everyday potential user / farmer-side equipment renter​
+Demographics: Young Rwandan user; exact role should be confirmed from LinkedIn or the
+survey file.​
+Goals: Find nearby farming equipment, compare rental prices, and avoid wasting time asking
+many people manually.​
+Frustrations: Equipment can be expensive, owners are hard to find, availability is unclear,
+and online platforms can feel confusing.​
+Behaviors: Prefers simple steps, may ask people for recommendations first, and would use
+an app if it is clear and trustworthy.
+
+Rest of the personas:
+Persona 1: Eric Habimana, Small-Scale Farmer
+Eric is a small-scale farmer from Bugesera who needs tractors, ploughing tools, and spraying
+tools. He currently finds equipment through neighbors, equipment owners, local leaders, and
+cooperatives, but he still struggles with high cost, late availability, unclear prices, lack of
+trust, delivery issues, and not knowing who owns equipment. He uses a smartphone and is
+willing to use a mobile app, so he needs a simple platform that shows nearby equipment,
+prices, availability, and trusted owners.
+Persona 2: Yvonne Kayitesi, Equipment Owner
+
+Yvonne is a farming equipment owner from Kabuga who owns a harvester and currently
+connects with users through local leaders or cooperatives. Her main challenge is that farmers
+may not easily find nearby equipment, even when it is available. She sometimes uses a phone
+and is willing to use the app, so she needs a simple owner dashboard where she can list
+equipment, show availability, and receive rental requests.
+Persona 3: Belyse Kalisa, Basic Phone Farmer
+Belyse is a small-scale farmer from Muhanga who needs irrigation pumps, ploughing tools,
+spraying tools, and transport equipment. She finds equipment through neighbors, direct calls,
+and cooperatives, but faces high cost, unclear prices, difficulty finding nearby equipment, and
+delivery problems. She uses a basic phone and said maybe to use the app, so the platform
+must be very simple, low-data, and easy for non-advanced users.
+More interview responses:​
+​
+Farming Equipment Rental Platform - Survey (Responses)
+
+Some of the Interview Stats as of the time of the doc (Graphs)
+
+Unique Value Proposition (UVP)
+
+AgriRent gives smallholder farmers a clear, community-based way to rent the equipment they
+need, whether that is a tractor, an irrigation pump, a sprayer, a harvester, or a few hand tools.
+Each listing shows the local price, what is available right now, and a rating for the owner, and
+the whole thing runs in a light app that works on a basic phone and a weak connection. Word
+of mouth and the tractor-only platforms cannot do this. What AgriRent does is take the local
+sharing that farmers already trust and turn it into a quick, reliable booking system, so a farmer
+can lock in equipment during the narrow window that makes or breaks a season.
+
+Reframed Problem Statement
+
+A smallholder farmer in rural Rwanda usually cannot afford to own machinery, so when the
+work comes due she has to hire it, and the only way to do that is to ask around. That informal
+
+route leaves her guessing about the price, unsure whether the equipment is even free, and
+with nothing to fall back on if the owner does not show. The gear then turns up late, or it
+never comes. She misses the planting or harvesting window, goes back to doing the work by
+hand, and earns less for the season. Meanwhile the owner's machine sits in a shed because he
+has no dependable way to hear that someone nearby needs it.
+
+User Flow
+AgriRent has two core flows. The diagrams from our design board should be embedded here;
+the steps are summarised below.
+
+Farmer — Search and Rent Flow (happy path and edge cases)
+Open app → Dashboard → Select equipment category → Search parameters (date, type,
+distance, price) → Enter location → Search.
+•​ Found: List equipment → Select item → Equipment detail page → Request to rent →
+Checkout → Confirm request → Check balance.
+•​ Enough balance: Success confirmation → Notify owner → Status changes to Booked
+→ End.
+•​ Not enough balance: Show ‘Insufficient balance’ error → return to adjust.
+•​ Not found: Show ‘Not found’ → redirect to Adjust search → search again.
+
+Owner / Onboarding Flow
+Splash → Register / Login → Role selection (Farmer or Owner) → Complete profile and
+verification → Role dashboard (owner: earnings, active requests, add new equipment).
+
+Story Boards
+Our storyboard follows Emmanuel, a smallholder farmer, over eight panels. Planting season
+arrives and all he has is a hand hoe for 1.5 hectares. He tries word of mouth, but every tractor
+is taken and nobody agrees on a price. At the cooperative a friend shows him AgriRent. He
+signs up in a few minutes and picks the farmer role. He finds verified equipment nearby with
+clear prices, distance, and ratings. He requests a tractor, sorts out a time over chat, and
+confirms the booking. The next morning the tractor shows up and the field is ploughed in
+hours. The season is saved, his yield is better, and he tells other farmers about it.
+
+Figma Prototype
+This section holds the interactive prototype. It covers the main screens: the splash and role
+selection, login, the farmer dashboard, search and filters, the equipment detail page, request
+and checkout, the booking confirmation, the owner dashboard, add-equipment, messages, and
+profile and settings. The design sticks to one set of fonts, follows a 60-30-10 colour split,
+
+uses plain icons, and links the screens so they match the user flows in Section 10 and the pain
+points the research turned up.
+Live Figma Prototype Link: FIGMA PROTOTYPE
+
+Reflection: Linking Design Decisions to Research
+The clearest theme in the interviews and the journey map was timing. Farmers cannot count
+on finding equipment when they actually need it, and because nobody is sure what a piece
+should cost or whether the other party will deliver, word of mouth turns into a slow, stressful
+chase. That is what pushed us toward a plain dashboard with equipment sorted into obvious
+categories and a search that works at the village level and shows what is free right now. A
+farmer can book inside the short planting window instead of spending days on the phone.
+
+The competitor analysis pointed to the same hole every time. Hello Tractor and TROTRO
+Tractor do their job well, but they are built around tractors. EM3 runs everything through a
+central service. Word of mouth keeps no records at all. Not one of them gives a farmer a
+simple local marketplace that covers different kinds of equipment and shows honest prices
+and ratings. So we made two calls. We cover tractors, pumps, sprayers, harvesters, and small
+hand tools instead of tractors alone, and we put the price, the distance, and the owner's rating
+on every listing, so the trust that used to come from knowing a neighbour now comes from
+the listing itself.
+
+The empathy maps brought out the owner's half of this. Their machines sit idle, and they
+worry about getting paid and about how far the gear has to travel. That is the reason for the
+owner dashboard, the booking confirmation, and the ratings system: owners get steady
+demand that pays, plus a reputation worth looking after. One more thing shaped everything.
+Rural users are on weak connections and basic phones, so keeping the app simple and light
+on data is not a nice extra but a requirement, and it is what drives the Choice Principle layout
+and the lightweight build across the prototype.
+
+References
+
+[1] U.S. International Trade Administration, “Rwanda — Agriculture Sector,” Country
+Commercial Guide. [Online]. Available:
+https://www.trade.gov/country-commercial-guides/rwanda-agriculture-sector
+[2] International Fund for Agricultural Development (IFAD), “Rwanda — Country Profile.”
+[Online]. Available: https://www.ifad.org/en/w/countries/rwanda
+[3] T. Daum and R. Birner, “What needs to be done to give Africa’s smallholder farmers
+access to machinery,” The Conversation. [Online]. Available:
+https://theconversation.com/what-needs-to-be-done-to-give-africas-smallholder-farmers-acce
+ss-to-machinery-85701
+[4] Mordor Intelligence, “Africa Agricultural Tractor Market — Size, Share and Growth
+Trends.” [Online]. Available:
+
+https://www.mordorintelligence.com/industry-reports/africa-agricultural-tractor-machinery-m
+arket
+[5] Offrange / Ambrook, “Tractors for the People.” [Online]. Available:
+https://ambrook.com/offrange/supply-chain/tractors-for-the-people
+[6] Agri Machinery Africa, “Smart Tractors in Africa: Are Smallholder Farms Ready?”
+[Online]. Available:
+https://agrimachinery.africa/tractors/smart-tractors-in-africa-are-smallholder-farms-ready/
+[7] GSMA Mobile for Development, “Investing in digital agriculture — insights from the
+AgriTech panel at MWC Kigali.” [Online]. Available:
+https://www.gsma.com/solutions-and-impact/connectivity-for-good/mobile-for-development/
+blog/investing-in-digital-agriculture-insights-from-the-agritechs-panel-discussion-at-mwc-kig
+ali/
+[8] Hello Tractor, “Growing together.” [Online]. Available: https://hellotractor.com/
+[9] GSMA Mobile for Development, “Hello Tractor.” [Online]. Available:
+https://www.gsma.com/solutions-and-impact/connectivity-for-good/mobile-for-development/
+digital-grantees-portfolio/hello-tractor/
+[10] TROTRO Tractor, “Welcome to TROTRO Tractor.” [Online]. Available:
+https://www.trotrotractor.com/
+[11] Agribusiness Dealroom, “TROTRO Tractor.” [Online]. Available:
+https://agribusinessdealroom.org/capital_seekers/trotro-tractor-2/
+[12] Unreasonable Group, “EM3 AgriServices.” [Online]. Available:
+https://unreasonablegroup.com/ventures/em3-agriservices
+
+
