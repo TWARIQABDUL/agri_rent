@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../equipment/presentation/bloc/equipment_bloc.dart';
 import '../widgets/active_rental_banner.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/custom_bottom_nav.dart';
@@ -23,45 +26,89 @@ class _HomePageState extends State<HomePage> {
     {'label': 'Harvesters', 'icon': '🌾'},
   ];
 
-  final List<Map<String, dynamic>> _equipmentList = [
-    {
-      'title': 'John Deere 5050D',
-      'owner': 'Patrick M.',
-      'price': 'RWF 25,000/day',
-      'rating': '4.8',
-      'type': 'Tractor',
-      'emoji': '🚜',
-    },
-    {
-      'title': 'Massey Ferguson 240',
-      'owner': 'Eric N.',
-      'price': 'RWF 30,000/day',
-      'rating': '4.9',
-      'type': 'Tractor',
-      'emoji': '🚜',
-    },
-    {
-      'title': 'Irrigation Pump X2',
-      'owner': 'Alice U.',
-      'price': 'RWF 8,000/day',
-      'rating': '4.6',
-      'type': 'Pump',
-      'emoji': '💧',
-    },
-    {
-      'title': 'Knapsack Sprayer',
-      'owner': 'Claudine M.',
-      'price': 'RWF 3,500/day',
-      'rating': '4.7',
-      'type': 'Sprayer',
-      'emoji': '🎒',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Fetch initial equipment (All)
+    context.read<EquipmentBloc>().add(const FetchEquipmentEvent(category: 'All'));
+  }
+
+  void _onCategorySelected(int index) {
+    setState(() {
+      _selectedCategoryIndex = index;
+    });
+    
+    final category = _categories[index]['label'];
+    context.read<EquipmentBloc>().add(FetchEquipmentEvent(category: category));
+  }
+
+  void _seedDummyData() async {
+    final firestore = FirebaseFirestore.instance;
+    final batch = firestore.batch();
+    
+    final items = [
+      {
+        'name': 'John Deere 5050D',
+        'ownerId': 'Patrick M.',
+        'description': 'Reliable tractor for heavy farming tasks.',
+        'pricePerDay': 25000.0,
+        'pricePerMonth': 600000.0,
+        'status': 'available',
+        'category': 'Tractors',
+        'image': '',
+        'location': 'Kigali',
+        'rating': 4.8,
+      },
+      {
+        'name': 'Irrigation Pump X2',
+        'ownerId': 'Alice U.',
+        'description': 'High capacity water pump.',
+        'pricePerDay': 8000.0,
+        'pricePerMonth': 200000.0,
+        'status': 'available',
+        'category': 'Pumps',
+        'image': '',
+        'location': 'Muhanga',
+        'rating': 4.6,
+      },
+      {
+        'name': 'Massey Ferguson 240',
+        'ownerId': 'Eric N.',
+        'description': 'Efficient and easy to use.',
+        'pricePerDay': 30000.0,
+        'pricePerMonth': 750000.0,
+        'status': 'available',
+        'category': 'Tractors',
+        'image': '',
+        'location': 'Kigali',
+        'rating': 4.9,
+      }
+    ];
+
+    for (var item in items) {
+      final docRef = firestore.collection('equipment').doc();
+      batch.set(docRef, item);
+    }
+    
+    await batch.commit();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Testing Equipment Added to Firestore! Refreshing...'))
+      );
+      // Refresh the list
+      context.read<EquipmentBloc>().add(const FetchEquipmentEvent(category: 'All'));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _seedDummyData,
+        backgroundColor: AppColors.accentYellow,
+        child: const Icon(Icons.add_box),
+      ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -123,9 +170,17 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(color: AppColors.borderColor),
                             ),
-                            child: const TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Search equipment...',
+                            child: TextField(
+                              onChanged: (value) {
+                                // Add location filter based on search input
+                                final category = _categories[_selectedCategoryIndex]['label'];
+                                context.read<EquipmentBloc>().add(FetchEquipmentEvent(
+                                  category: category,
+                                  location: value,
+                                ));
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Search by location...',
                                 hintStyle: TextStyle(color: AppColors.textSecondary),
                                 prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
                                 border: InputBorder.none,
@@ -159,11 +214,7 @@ class _HomePageState extends State<HomePage> {
                             label: category['label']!,
                             icon: category['icon']!,
                             isSelected: _selectedCategoryIndex == index,
-                            onTap: () {
-                              setState(() {
-                                _selectedCategoryIndex = index;
-                              });
-                            },
+                            onTap: () => _onCategorySelected(index),
                           );
                         },
                       ),
@@ -174,27 +225,61 @@ class _HomePageState extends State<HomePage> {
                     const ActiveRentalBanner(),
                     const SizedBox(height: 24),
 
-                    // Equipment Grid
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.75,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
-                      itemCount: _equipmentList.length,
-                      itemBuilder: (context, index) {
-                        final equipment = _equipmentList[index];
-                        return EquipmentCard(
-                          title: equipment['title'],
-                          owner: equipment['owner'],
-                          price: equipment['price'],
-                          rating: equipment['rating'],
-                          type: equipment['type'],
-                          emoji: equipment['emoji'],
-                        );
+                    // Equipment Grid with BLoC Builder
+                    BlocBuilder<EquipmentBloc, EquipmentState>(
+                      builder: (context, state) {
+                        if (state is EquipmentLoading) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(32.0),
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryDark,
+                              ),
+                            ),
+                          );
+                        } else if (state is EquipmentError) {
+                          return Center(
+                            child: Text(
+                              'Error: ${state.message}',
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          );
+                        } else if (state is EquipmentLoaded) {
+                          if (state.equipment.isEmpty) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(32.0),
+                                child: Text('No equipment found.'),
+                              ),
+                            );
+                          }
+                          
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.75,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                            ),
+                            itemCount: state.equipment.length,
+                            itemBuilder: (context, index) {
+                              final equipment = state.equipment[index];
+                              return EquipmentCard(
+                                name: equipment.name,
+                                ownerId: equipment.ownerId,
+                                pricePerDay: equipment.pricePerDay,
+                                location: equipment.location,
+                                rating: equipment.rating,
+                                type: equipment.category,
+                                image: equipment.image,
+                              );
+                            },
+                          );
+                        }
+                        
+                        return const SizedBox.shrink();
                       },
                     ),
                   ],

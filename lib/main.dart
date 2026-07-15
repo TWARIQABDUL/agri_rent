@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/equipment/presentation/bloc/equipment_bloc.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'core/theme/app_colors.dart';
 
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (_) => sl<AuthBloc>()..add(CheckAuthStatusEvent()),
+        ),
+        BlocProvider(
+          create: (_) => sl<EquipmentBloc>(),
         ),
       ],
       child: MaterialApp(
