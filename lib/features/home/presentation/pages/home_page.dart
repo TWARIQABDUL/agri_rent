@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../equipment/presentation/bloc/equipment_bloc.dart';
 import '../widgets/active_rental_banner.dart';
@@ -42,73 +41,10 @@ class _HomePageState extends State<HomePage> {
     context.read<EquipmentBloc>().add(FetchEquipmentEvent(category: category));
   }
 
-  void _seedDummyData() async {
-    final firestore = FirebaseFirestore.instance;
-    final batch = firestore.batch();
-    
-    final items = [
-      {
-        'name': 'John Deere 5050D',
-        'ownerId': 'Patrick M.',
-        'description': 'Reliable tractor for heavy farming tasks.',
-        'pricePerDay': 25000.0,
-        'pricePerMonth': 600000.0,
-        'status': 'available',
-        'category': 'Tractors',
-        'image': '',
-        'location': 'Kigali',
-        'rating': 4.8,
-      },
-      {
-        'name': 'Irrigation Pump X2',
-        'ownerId': 'Alice U.',
-        'description': 'High capacity water pump.',
-        'pricePerDay': 8000.0,
-        'pricePerMonth': 200000.0,
-        'status': 'available',
-        'category': 'Pumps',
-        'image': '',
-        'location': 'Muhanga',
-        'rating': 4.6,
-      },
-      {
-        'name': 'Massey Ferguson 240',
-        'ownerId': 'Eric N.',
-        'description': 'Efficient and easy to use.',
-        'pricePerDay': 30000.0,
-        'pricePerMonth': 750000.0,
-        'status': 'available',
-        'category': 'Tractors',
-        'image': '',
-        'location': 'Kigali',
-        'rating': 4.9,
-      }
-    ];
-
-    for (var item in items) {
-      final docRef = firestore.collection('equipment').doc();
-      batch.set(docRef, item);
-    }
-    
-    await batch.commit();
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Testing Equipment Added to Firestore! Refreshing...'))
-      );
-      // Refresh the list
-      context.read<EquipmentBloc>().add(const FetchEquipmentEvent(category: 'All'));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      floatingActionButton: FloatingActionButton(
-        onPressed: _seedDummyData,
-        backgroundColor: AppColors.accentYellow,
-        child: const Icon(Icons.add_box),
-      ),
       body: SafeArea(
         child: Stack(
           children: [
