@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/services/preferences_service.dart';
 import '../../../../injection_container.dart';
-import '../../../home/presentation/pages/home_page.dart';
+import '../../../main_shell/main_shell.dart';
 import '../bloc/auth_bloc.dart';
 import 'role_selection_page.dart';
 import 'sign_in_page.dart';
@@ -23,7 +23,7 @@ class SplashPage extends StatelessWidget {
         listener: (context, state) {
           if (state is Authenticated) {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const HomePage()),
+              MaterialPageRoute(builder: (_) => const MainShell()),
             );
           }
         },
