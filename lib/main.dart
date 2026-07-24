@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/pages/splash_page.dart';
 import 'features/equipment/presentation/bloc/equipment_bloc.dart';
-import 'features/home/presentation/pages/home_page.dart';
 import 'core/theme/app_colors.dart';
 
 void main() async {
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
           ),
           fontFamily: 'Roboto', // Defaulting to Roboto until custom fonts are added
         ),
-        home: const HomePage(),
+        home: const SplashPage(),
       ),
     );
   }
