@@ -21,22 +21,22 @@ class EquipmentCard extends StatelessWidget {
     required this.image,
   });
 
-  String _getEmojiForType() {
+  IconData _getIconForType() {
     switch (type.toLowerCase()) {
       case 'tractor':
       case 'tractors':
-        return '🚜';
+        return Icons.agriculture_outlined;
       case 'pump':
       case 'pumps':
-        return '💧';
+        return Icons.water_drop_outlined;
       case 'sprayer':
       case 'sprayers':
-        return '🎒';
+        return Icons.shower_outlined;
       case 'harvester':
       case 'harvesters':
-        return '🌾';
+        return Icons.grass_outlined;
       default:
-        return '🔧';
+        return Icons.build_outlined;
     }
   }
 
@@ -70,9 +70,10 @@ class EquipmentCard extends StatelessWidget {
                     ),
                   ),
                   child: Center(
-                    child: Text(
-                      _getEmojiForType(),
-                      style: const TextStyle(fontSize: 50),
+                    child: Icon(
+                      _getIconForType(),
+                      size: 56,
+                      color: AppColors.primaryDark,
                     ),
                   ),
                 ),
