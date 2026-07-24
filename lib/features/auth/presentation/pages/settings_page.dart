@@ -57,16 +57,108 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  Future<void> _cycleLanguage() async {
-    final next = (_langIndex + 1) % PreferencesService.languages.length;
-    setState(() => _langIndex = next);
-    await _prefs.setLanguage(PreferencesService.languages[next]);
+  Future<void> _pickLanguage() async {
+    final picked = await _showPicker(
+      title: 'Language',
+      options: PreferencesService.languages,
+      selected: PreferencesService.languages[_langIndex],
+    );
+    if (picked == null) return;
+    final idx = PreferencesService.languages.indexOf(picked);
+    setState(() => _langIndex = idx);
+    await _prefs.setLanguage(picked);
   }
 
-  Future<void> _cycleCurrency() async {
-    final next = (_currencyIndex + 1) % PreferencesService.currencies.length;
-    setState(() => _currencyIndex = next);
-    await _prefs.setCurrency(PreferencesService.currencies[next]);
+  Future<void> _pickCurrency() async {
+    final picked = await _showPicker(
+      title: 'Currency',
+      options: PreferencesService.currencies,
+      selected: PreferencesService.currencies[_currencyIndex],
+    );
+    if (picked == null) return;
+    final idx = PreferencesService.currencies.indexOf(picked);
+    setState(() => _currencyIndex = idx);
+    await _prefs.setCurrency(picked);
+  }
+
+  Future<String?> _showPicker({
+    required String title,
+    required List<String> options,
+    required String selected,
+  }) {
+    return showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetCtx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: _border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: _dark,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              ...options.map((opt) {
+                final isSelected = opt == selected;
+                return InkWell(
+                  onTap: () => Navigator.of(sheetCtx).pop(opt),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            opt,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isSelected ? _greenDark : _dark,
+                            ),
+                          ),
+                        ),
+                        if (isSelected)
+                          const Icon(Icons.check, color: _green, size: 20),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _setPush(bool v) async {
@@ -156,13 +248,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icons.language,
                         label: 'Language',
                         value: PreferencesService.languages[_langIndex],
-                        onTap: _cycleLanguage,
+                        onTap: _pickLanguage,
                       ),
                       _rowClickable(
                         icon: Icons.attach_money,
                         label: 'Currency',
                         value: PreferencesService.currencies[_currencyIndex],
-                        onTap: _cycleCurrency,
+                        onTap: _pickCurrency,
                       ),
                     ]),
                     const SizedBox(height: 20),
@@ -296,6 +388,9 @@ class _SettingsPageState extends State<SettingsPage> {
             onChanged: onChanged,
             activeThumbColor: Colors.white,
             activeTrackColor: _green,
+            inactiveThumbColor: Colors.white,
+            inactiveTrackColor: const Color(0xFFEDF0F3),
+            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
           ),
         ],
       ),
