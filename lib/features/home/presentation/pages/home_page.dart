@@ -29,11 +29,11 @@ class _HomePageState extends State<HomePage> {
   String _currentLocationFilter = 'Anywhere';
   double _currentMaxPriceFilter = 100000.0;
 
-  final List<Map<String, String>> _categories = [
-    {'label': 'All', 'icon': '🗂️'},
-    {'label': 'Tractors', 'icon': '🚜'},
-    {'label': 'Pumps', 'icon': '💧'},
-    {'label': 'Harvesters', 'icon': '🌾'},
+  final List<Map<String, dynamic>> _categories = [
+    {'label': 'All', 'icon': Icons.grid_view_rounded},
+    {'label': 'Tractors', 'icon': Icons.agriculture_outlined},
+    {'label': 'Pumps', 'icon': Icons.water_drop_outlined},
+    {'label': 'Harvesters', 'icon': Icons.grass_outlined},
   ];
 
   @override
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       _selectedCategoryIndex = index;
     });
 
-    final category = _categories[index]['label'];
+    final category = _categories[index]['label'] as String;
     context.read<EquipmentBloc>().add(
       FetchEquipmentEvent(
         category: category,
@@ -71,7 +71,8 @@ class _HomePageState extends State<HomePage> {
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: FilterBottomSheet(
-            initialCategory: _categories[_selectedCategoryIndex]['label'],
+            initialCategory:
+                _categories[_selectedCategoryIndex]['label'] as String,
             initialLocation: _currentLocationFilter,
             initialMaxPrice: _currentMaxPriceFilter,
             onApply: (category, location, maxPrice) {
@@ -185,7 +186,8 @@ class _HomePageState extends State<HomePage> {
                             });
                             // Add location filter based on search input
                             final category =
-                                _categories[_selectedCategoryIndex]['label'];
+                                _categories[_selectedCategoryIndex]['label']
+                                    as String;
                             context.read<EquipmentBloc>().add(
                               FetchEquipmentEvent(
                                 category: category,
@@ -234,8 +236,8 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       final category = _categories[index];
                       return CategoryChip(
-                        label: category['label']!,
-                        icon: category['icon']!,
+                        label: category['label'] as String,
+                        icon: category['icon'] as IconData,
                         isSelected: _selectedCategoryIndex == index,
                         onTap: () => _onCategorySelected(index),
                       );

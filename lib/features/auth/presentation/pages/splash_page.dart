@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/services/preferences_service.dart';
 import '../../../../injection_container.dart';
 import '../../../main_shell/main_shell.dart';
 import '../bloc/auth_bloc.dart';
-import 'role_selection_page.dart';
 import 'sign_in_page.dart';
 import 'sign_up_page.dart';
 
@@ -35,15 +35,17 @@ class SplashPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _brand(),
-                Expanded(child: _hero()),
+                const Spacer(flex: 2),
+                _hero(),
+                const SizedBox(height: 32),
                 const Text(
-                  'Rent Farm Equipment,\nGrow Together!',
+                  'Rent Farm\nEquipment,\nGrow Together!',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 34,
-                    height: 1.15,
+                    fontSize: 38,
+                    height: 1.1,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: -0.3,
+                    letterSpacing: -0.4,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -56,7 +58,7 @@ class SplashPage extends StatelessWidget {
                     height: 1.55,
                   ),
                 ),
-                const SizedBox(height: 26),
+                const Spacer(flex: 1),
                 SizedBox(
                   height: 60,
                   child: ElevatedButton(
@@ -147,11 +149,11 @@ class SplashPage extends StatelessWidget {
 
   Widget _hero() {
     return Center(
-      child: Image.asset(
+      child: SvgPicture.asset(
         'assets/images/tractor.svg',
-        width: 260,
+        width: 300,
         fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => Container(
+        placeholderBuilder: (context) => Container(
           width: 220,
           height: 220,
           decoration: BoxDecoration(
@@ -165,15 +167,7 @@ class SplashPage extends StatelessWidget {
   }
 
   Future<void> _startOnboarding(BuildContext context) async {
-    final role = await Navigator.of(context).push<UserRole>(
-      MaterialPageRoute(builder: (_) => const RoleSelectionPage()),
-    );
-    if (role == null || !context.mounted) return;
-    await sl<PreferencesService>().setRole(
-      role == UserRole.farmer
-          ? PreferencesService.roleFarmer
-          : PreferencesService.roleOwner,
-    );
+    await sl<PreferencesService>().setRole(PreferencesService.roleOwner);
     if (!context.mounted) return;
     Navigator.of(
       context,

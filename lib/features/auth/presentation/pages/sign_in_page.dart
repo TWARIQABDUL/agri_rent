@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../home/presentation/pages/home_page.dart';
+import '../../../main_shell/main_shell.dart';
 import '../bloc/auth_bloc.dart';
 import 'sign_up_page.dart';
 
@@ -13,11 +14,14 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  static const Color _green = Color(0xFF2E7D32);
+  static const Color _green = Color(0xFF3D6B34);
+  static const Color _greenDeep = Color(0xFF2E5A28);
   static const Color _dark = Color(0xFF1A1A1A);
   static const Color _muted = Color(0xFF6B7280);
   static const Color _border = Color(0xFFE5E7EB);
   static const Color _tint = Color(0xFFE8F1E5);
+  static const Color _accent = Color(0xFFF5A623);
+  static const Color _accentSoft = Color(0xFFF9C74F);
 
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -58,78 +62,67 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is Authenticated) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const HomePage()),
-              (route) => false,
-            );
-          } else if (state is AuthError) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red.shade600,
-                ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is Authenticated) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const MainShell()),
+                (route) => false,
               );
-          }
-        },
-        child: SafeArea(
+            } else if (state is AuthError) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red.shade600,
+                  ),
+                );
+            }
+          },
           child: Column(
             children: [
               _header(context),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(28, 22, 28, 14),
+                  padding: const EdgeInsets.fromLTRB(28, 26, 28, 24),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
-                          'Welcome back,',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            color: _green,
+                        const Center(
+                          child: Text(
+                            'Welcome back,',
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w800,
+                              color: _green,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Sign in to continue renting equipment.',
-                          style: TextStyle(fontSize: 14, color: _muted),
-                        ),
-                        const SizedBox(height: 16),
-                        _illustration(),
-                        const SizedBox(height: 8),
-                        _emailField(),
-                        const SizedBox(height: 13),
-                        _passwordField(),
                         const SizedBox(height: 6),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: const Text(
-                              'Forgot password?',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: _green,
-                              ),
-                            ),
+                        const Center(
+                          child: Text(
+                            'Sign in to continue.',
+                            style: TextStyle(fontSize: 14, color: _muted),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
+                        _illustration(),
+                        const SizedBox(height: 18),
+                        _emailField(),
+                        const SizedBox(height: 14),
+                        _passwordField(),
+                        const SizedBox(height: 26),
                         _signInButton(),
                         const SizedBox(height: 22),
                         _orDivider(),
@@ -137,6 +130,7 @@ class _SignInPageState extends State<SignInPage> {
                         _googleButton(),
                         const SizedBox(height: 22),
                         _signUpFooter(),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
@@ -150,9 +144,10 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Widget _header(BuildContext context) {
+    final topInset = MediaQuery.of(context).padding.top;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 22),
+      padding: EdgeInsets.fromLTRB(20, topInset + 8, 20, 22),
       decoration: const BoxDecoration(
         color: _green,
         borderRadius: BorderRadius.only(
@@ -160,62 +155,142 @@ class _SignInPageState extends State<SignInPage> {
           bottomRight: Radius.circular(28),
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (Navigator.canPop(context))
-            GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.16),
-                  borderRadius: BorderRadius.circular(12),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.canPop(context)
+                    ? Navigator.of(context).pop()
+                    : null,
+                child: Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 16,
+                    color: Colors.white,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 18,
+              ),
+              const SizedBox(width: 14),
+              const Text(
+                'Sign In',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),
               ),
-            ),
-          const SizedBox(width: 14),
-          const Text(
-            'Sign In',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
+            ],
           ),
+          const SizedBox(height: 14),
+          _brand(),
         ],
       ),
     );
   }
 
-  Widget _illustration() {
-    return SizedBox(
-      height: 160,
-      child: Center(
-        child: Container(
-          width: 148,
-          height: 148,
-          decoration: const BoxDecoration(color: _tint, shape: BoxShape.circle),
-          child: Container(
-            width: 76,
-            height: 114,
-            margin: const EdgeInsets.all(17),
-            decoration: BoxDecoration(
-              color: _green,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.lock_outline,
-              color: Colors.white,
-              size: 36,
-            ),
+  Widget _brand() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: _accent,
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: const Icon(Icons.agriculture, color: Colors.white, size: 20),
+        ),
+        const SizedBox(width: 10),
+        const Text(
+          'AgriRent',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.3,
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _illustration() {
+    return SizedBox(
+      height: 168,
+      child: Center(
+        child: SizedBox(
+          width: 180,
+          height: 168,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 156,
+                height: 156,
+                decoration: const BoxDecoration(
+                  color: _tint,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Container(
+                width: 82,
+                height: 122,
+                decoration: BoxDecoration(
+                  color: _green,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.lock_outline,
+                  color: Colors.white,
+                  size: 38,
+                ),
+              ),
+              Positioned(
+                top: 18,
+                left: 40,
+                child: _dot(14, _greenDeep),
+              ),
+              Positioned(
+                top: 34,
+                right: 26,
+                child: _dot(16, _accent),
+              ),
+              Positioned(
+                right: 22,
+                top: 88,
+                child: _dot(10, _accentSoft),
+              ),
+              Positioned(
+                bottom: 26,
+                left: 32,
+                child: _dot(12, _tint),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _dot(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: color == _tint
+            ? Border.all(color: _green.withValues(alpha: 0.2), width: 1)
+            : null,
       ),
     );
   }
@@ -266,14 +341,14 @@ class _SignInPageState extends State<SignInPage> {
   }) {
     OutlineInputBorder border(Color c) => OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(color: c, width: 1.5),
+      borderSide: BorderSide(color: c, width: 1.4),
     );
     return InputDecoration(
       hintText: hint,
       hintStyle: const TextStyle(color: _muted, fontSize: 14),
-      prefixIcon: Icon(icon, color: _green, size: 19),
+      prefixIcon: Icon(icon, color: _green, size: 20),
       suffixIcon: suffix,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       enabledBorder: border(_border),
       focusedBorder: border(_green),
       errorBorder: border(Colors.red.shade400),
@@ -317,7 +392,7 @@ class _SignInPageState extends State<SignInPage> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: 10),
                       Icon(Icons.arrow_forward, size: 19),
                     ],
                   ),

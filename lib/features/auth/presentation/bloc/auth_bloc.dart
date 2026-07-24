@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/usecases/usecase.dart';
@@ -71,7 +73,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       emit(Authenticated(user));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -90,7 +92,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       emit(Authenticated(user));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -103,7 +105,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await signInWithGoogle(NoParams());
       emit(Authenticated(user));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -115,7 +117,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await signOut(NoParams());
       emit(Unauthenticated());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -131,5 +133,53 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> close() {
     _authSubscription?.cancel();
     return super.close();
+  }
+
+  String _friendlyError(Object error) {
+    if (error is GoogleSignInException) {
+      switch (error.code) {
+        case GoogleSignInExceptionCode.canceled:
+          return 'Google sign-in was canceled.';
+        case GoogleSignInExceptionCode.interrupted:
+          return 'Google sign-in was interrupted. Please try again.';
+        case GoogleSignInExceptionCode.clientConfigurationError:
+        case GoogleSignInExceptionCode.providerConfigurationError:
+          return 'Google sign-in is not configured. '
+              'Check Firebase setup (SHA-1 and Google provider).';
+        case GoogleSignInExceptionCode.uiUnavailable:
+          return 'Google sign-in UI could not be shown.';
+        case GoogleSignInExceptionCode.userMismatch:
+          return 'The signed-in account does not match. Try again.';
+        case GoogleSignInExceptionCode.unknownError:
+          return 'Google sign-in failed. Please try again.';
+      }
+    }
+    if (error is fb.FirebaseAuthException) {
+      switch (error.code) {
+        case 'invalid-credential':
+        case 'wrong-password':
+        case 'user-not-found':
+          return 'Incorrect email or password. Please try again.';
+        case 'invalid-email':
+          return 'Please enter a valid email address.';
+        case 'user-disabled':
+          return 'This account has been disabled. Contact support.';
+        case 'email-already-in-use':
+          return 'An account with this email already exists.';
+        case 'weak-password':
+          return 'Password is too weak. Use at least 6 characters.';
+        case 'operation-not-allowed':
+          return 'This sign-in method is not enabled.';
+        case 'too-many-requests':
+          return 'Too many attempts. Please try again later.';
+        case 'network-request-failed':
+          return 'Network error. Check your connection and try again.';
+        case 'account-exists-with-different-credential':
+          return 'This email is already used with a different sign-in method.';
+        default:
+          return error.message ?? 'Something went wrong. Please try again.';
+      }
+    }
+    return 'Something went wrong. Please try again.';
   }
 }

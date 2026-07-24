@@ -70,13 +70,10 @@ void main() {
       await tester.pump();
 
       expect(find.text('Sign In'), findsWidgets);
+      expect(find.text('AgriRent'), findsOneWidget);
       expect(find.text('Welcome back,'), findsOneWidget);
-      expect(
-        find.text('Sign in to continue renting equipment.'),
-        findsOneWidget,
-      );
+      expect(find.text('Sign in to continue.'), findsOneWidget);
       expect(find.byType(TextFormField), findsNWidgets(2));
-      expect(find.text('Forgot password?'), findsOneWidget);
       expect(find.text('or continue with'), findsOneWidget);
       expect(find.text('Continue with Google'), findsOneWidget);
       expect(
