@@ -17,6 +17,21 @@ void main() async {
   runApp(const MyApp());
 }
 
+class _AppScrollBehavior extends MaterialScrollBehavior {
+  const _AppScrollBehavior();
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const ClampingScrollPhysics();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) => child;
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -33,6 +48,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'AgriRent',
         debugShowCheckedModeBanner: false,
+        scrollBehavior: const _AppScrollBehavior(),
         theme: ThemeData(
           scaffoldBackgroundColor: AppColors.background,
           colorScheme: ColorScheme.fromSeed(
