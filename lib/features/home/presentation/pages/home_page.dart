@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../equipment/presentation/bloc/equipment_bloc.dart';
 import '../widgets/active_rental_banner.dart';
 import '../widgets/category_chip.dart';
@@ -16,6 +17,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedCategoryIndex = 0;
+
+  String _initialsFrom(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts[0].isEmpty) return '?';
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
 
   // Filter States
   String _currentLocationFilter = 'Anywhere';
@@ -105,43 +113,56 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    final user = state is Authenticated ? state.user : null;
+                    final name = user?.displayName?.trim().isNotEmpty == true
+                        ? user!.displayName!
+                        : (user?.email.split('@').first ?? 'there');
+                    final initials = _initialsFrom(name);
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Hello, welcome 👋',
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 14,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Hello, welcome 👋',
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                name,
+                                style: const TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Jean Bosco',
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(width: 12),
+                        CircleAvatar(
+                          backgroundColor: AppColors.primaryDark,
+                          radius: 24,
+                          child: Text(
+                            initials,
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       ],
-                    ),
-                    CircleAvatar(
-                      backgroundColor: AppColors.primaryDark,
-                      radius: 24,
-                      child: const Text(
-                        'JB',
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
 
