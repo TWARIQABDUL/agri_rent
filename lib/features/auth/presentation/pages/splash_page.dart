@@ -14,6 +14,7 @@ class SplashPage extends StatelessWidget {
 
   static const Color _bg = Color(0xFF0D2A13);
   static const Color _accent = Color(0xFFF9A825);
+  static const Color _accentLight = Color(0xFFFBC02D);
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +40,9 @@ class SplashPage extends StatelessWidget {
                   'Rent Farm Equipment,\nGrow Together!',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 30,
+                    fontSize: 34,
                     height: 1.15,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -99,7 +100,7 @@ class SplashPage extends StatelessWidget {
                           TextSpan(
                             text: 'Log in',
                             style: TextStyle(
-                              color: Color(0xFFFBC02D),
+                              color: _accentLight,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -136,7 +137,7 @@ class SplashPage extends StatelessWidget {
           style: TextStyle(
             color: Colors.white,
             fontSize: 19,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
             letterSpacing: 0.3,
           ),
         ),
@@ -146,14 +147,19 @@ class SplashPage extends StatelessWidget {
 
   Widget _hero() {
     return Center(
-      child: Container(
-        width: 200,
-        height: 200,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          shape: BoxShape.circle,
+      child: Image.asset(
+        'assets/images/tractor.svg',
+        width: 260,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: 220,
+          height: 220,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.agriculture, size: 120, color: _accent),
         ),
-        child: const Icon(Icons.agriculture, size: 120, color: _accent),
       ),
     );
   }
