@@ -5,13 +5,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PreferencesService {
   static const String _kRole = 'pref_role';
   static const String _kLanguage = 'pref_language';
-  static const String _kThemeMode = 'pref_theme_mode';
+  static const String _kCurrency = 'pref_currency';
+  static const String _kPushNotifications = 'pref_push_notifications';
+  static const String _kEmailNotifications = 'pref_email_notifications';
+  static const String _kSmsNotifications = 'pref_sms_notifications';
 
   static const String roleFarmer = 'farmer';
   static const String roleOwner = 'owner';
 
-  static const String themeLight = 'light';
-  static const String themeDark = 'dark';
+  static const List<String> languages = [
+    'English',
+    'Kinyarwanda',
+    'Français',
+    'Kiswahili',
+  ];
+
+  static const List<String> currencies = ['RWF', 'USD', 'EUR'];
 
   Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
@@ -28,17 +37,32 @@ class PreferencesService {
     await (await _prefs).setString(_kLanguage, language);
   }
 
-  Future<String> getThemeMode() async =>
-      (await _prefs).getString(_kThemeMode) ?? themeLight;
+  Future<String> getCurrency() async =>
+      (await _prefs).getString(_kCurrency) ?? 'RWF';
 
-  Future<void> setThemeMode(String mode) async {
-    await (await _prefs).setString(_kThemeMode, mode);
+  Future<void> setCurrency(String currency) async {
+    await (await _prefs).setString(_kCurrency, currency);
   }
 
-  Future<bool> isDarkMode() async => (await getThemeMode()) == themeDark;
+  Future<bool> getPushNotifications() async =>
+      (await _prefs).getBool(_kPushNotifications) ?? true;
 
-  Future<void> setDarkMode(bool isDark) async {
-    await setThemeMode(isDark ? themeDark : themeLight);
+  Future<void> setPushNotifications(bool enabled) async {
+    await (await _prefs).setBool(_kPushNotifications, enabled);
+  }
+
+  Future<bool> getEmailNotifications() async =>
+      (await _prefs).getBool(_kEmailNotifications) ?? true;
+
+  Future<void> setEmailNotifications(bool enabled) async {
+    await (await _prefs).setBool(_kEmailNotifications, enabled);
+  }
+
+  Future<bool> getSmsNotifications() async =>
+      (await _prefs).getBool(_kSmsNotifications) ?? false;
+
+  Future<void> setSmsNotifications(bool enabled) async {
+    await (await _prefs).setBool(_kSmsNotifications, enabled);
   }
 
   Future<void> clear() async {
@@ -46,7 +70,10 @@ class PreferencesService {
     await Future.wait([
       p.remove(_kRole),
       p.remove(_kLanguage),
-      p.remove(_kThemeMode),
+      p.remove(_kCurrency),
+      p.remove(_kPushNotifications),
+      p.remove(_kEmailNotifications),
+      p.remove(_kSmsNotifications),
     ]);
   }
 }

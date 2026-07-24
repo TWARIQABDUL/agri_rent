@@ -35,7 +35,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final PreferencesService _prefs = sl<PreferencesService>();
 
   int _langIndex = 0;
-  bool _darkMode = false;
   UserRole _role = UserRole.farmer;
 
   @override
@@ -46,13 +45,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadPreferences() async {
     final lang = await _prefs.getLanguage();
-    final dark = await _prefs.isDarkMode();
     final role = await _prefs.getRole();
     if (!mounted) return;
     setState(() {
       final idx = _languages.indexOf(lang);
       if (idx != -1) _langIndex = idx;
-      _darkMode = dark;
       if (role == PreferencesService.roleOwner) _role = UserRole.owner;
       if (role == PreferencesService.roleFarmer) _role = UserRole.farmer;
     });
@@ -62,11 +59,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final next = (_langIndex + 1) % _languages.length;
     setState(() => _langIndex = next);
     await _prefs.setLanguage(_languages[next]);
-  }
-
-  Future<void> _setDarkMode(bool v) async {
-    setState(() => _darkMode = v);
-    await _prefs.setDarkMode(v);
   }
 
   Future<void> _setRole(UserRole role) async {
@@ -121,13 +113,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       label: 'Language',
                       value: _languages[_langIndex],
                       onTap: _cycleLanguage,
-                    ),
-                    _rowToggle(
-                      icon: Icons.dark_mode_outlined,
-                      label: 'Dark mode',
-                      subtitle: 'Reduce eye strain at night',
-                      value: _darkMode,
-                      onChanged: _setDarkMode,
                     ),
                     _rowClickable(
                       icon: Icons.swap_horiz,
@@ -374,52 +359,6 @@ class _ProfilePageState extends State<ProfilePage> {
             const Icon(Icons.chevron_right, color: _muted, size: 20),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _rowToggle({
-    required IconData icon,
-    required String label,
-    String? subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          _rowIcon(icon),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: _dark,
-                  ),
-                ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 12, color: _muted),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: Colors.white,
-            activeTrackColor: _green,
-          ),
-        ],
       ),
     );
   }
