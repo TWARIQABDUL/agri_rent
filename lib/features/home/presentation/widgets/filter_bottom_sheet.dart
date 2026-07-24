@@ -25,7 +25,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   late double _maxPrice;
 
   final List<String> _categories = ['All', 'Tractors', 'Pumps', 'Harvesters'];
-  final List<String> _locations = ['Anywhere', 'Kigali', 'Muhanga', 'Musanze', 'Rubavu'];
+  final List<String> _locations = [
+    'Anywhere',
+    'Kigali',
+    'Muhanga',
+    'Musanze',
+    'Rubavu',
+  ];
 
   @override
   void initState() {
@@ -65,11 +71,14 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Category Section
           const Text(
             'Category',
-            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -96,7 +105,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           // Location Section
           const Text(
             'Distance / Location',
-            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 8),
           Container(
@@ -131,12 +143,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             children: [
               const Text(
                 'Max Price (per day)',
-                style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
               Text(
                 'RWF ${_maxPrice.toInt()}',
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold, 
+                  fontWeight: FontWeight.bold,
                   color: AppColors.primaryDark,
                 ),
               ),

@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/equipment.dart';
@@ -19,16 +19,22 @@ class EquipmentBloc extends Bloc<EquipmentEvent, EquipmentState> {
         final equipmentList = await getEquipment(
           GetEquipmentParams(category: event.category),
         );
-        
+
         // Client-side filtering for location and price
         List<Equipment> filteredList = equipmentList;
-        
-        if (event.location != null && event.location!.isNotEmpty && event.location != 'Anywhere') {
+
+        if (event.location != null &&
+            event.location!.isNotEmpty &&
+            event.location != 'Anywhere') {
           filteredList = filteredList
-              .where((e) => e.location.toLowerCase().contains(event.location!.toLowerCase()))
+              .where(
+                (e) => e.location.toLowerCase().contains(
+                  event.location!.toLowerCase(),
+                ),
+              )
               .toList();
         }
-        
+
         if (event.maxPrice != null) {
           filteredList = filteredList
               .where((e) => e.pricePerDay <= event.maxPrice!)

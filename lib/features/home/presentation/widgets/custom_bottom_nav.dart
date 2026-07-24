@@ -40,10 +40,7 @@ class CustomBottomNav extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: isSelected
-            ? const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              )
+            ? const BoxDecoration(color: Colors.white, shape: BoxShape.circle)
             : null,
         child: Icon(
           icon,

@@ -75,90 +75,108 @@ void main() {
     expect(bloc.state, isA<EquipmentInitial>());
   });
 
-  test('emits [Loading, Loaded] with ALL data when fetching with no filters', () async {
-    // Arrange
-    final expectedResponse = repository.mockData;
-    
-    // Assert later
-    expectLater(
-      bloc.stream,
-      emitsInOrder([
-        isA<EquipmentLoading>(),
-        isA<EquipmentLoaded>().having(
-          (state) => state.equipment.length,
-          'equipment list length',
-          3,
-        ),
-      ]),
-    );
+  test(
+    'emits [Loading, Loaded] with ALL data when fetching with no filters',
+    () async {
+      // Assert later
+      expectLater(
+        bloc.stream,
+        emitsInOrder([
+          isA<EquipmentLoading>(),
+          isA<EquipmentLoaded>().having(
+            (state) => state.equipment.length,
+            'equipment list length',
+            3,
+          ),
+        ]),
+      );
 
-    // Act
-    bloc.add(const FetchEquipmentEvent(category: 'All'));
-  });
+      // Act
+      bloc.add(const FetchEquipmentEvent(category: 'All'));
+    },
+  );
 
-  test('emits [Loading, Loaded] with filtered data when category filter is applied', () async {
-    // Assert later
-    expectLater(
-      bloc.stream,
-      emitsInOrder([
-        isA<EquipmentLoading>(),
-        isA<EquipmentLoaded>().having(
-          (state) => state.equipment.length,
-          'equipment list length',
-          2, // 2 Tractors
-        ).having(
-          (state) => state.equipment.every((e) => e.category == 'Tractors'),
-          'all are Tractors',
-          true,
-        ),
-      ]),
-    );
+  test(
+    'emits [Loading, Loaded] with filtered data when category filter is applied',
+    () async {
+      // Assert later
+      expectLater(
+        bloc.stream,
+        emitsInOrder([
+          isA<EquipmentLoading>(),
+          isA<EquipmentLoaded>()
+              .having(
+                (state) => state.equipment.length,
+                'equipment list length',
+                2, // 2 Tractors
+              )
+              .having(
+                (state) =>
+                    state.equipment.every((e) => e.category == 'Tractors'),
+                'all are Tractors',
+                true,
+              ),
+        ]),
+      );
 
-    // Act
-    bloc.add(const FetchEquipmentEvent(category: 'Tractors'));
-  });
+      // Act
+      bloc.add(const FetchEquipmentEvent(category: 'Tractors'));
+    },
+  );
 
-  test('emits [Loading, Loaded] with filtered data when location search is applied', () async {
-    // Assert later
-    expectLater(
-      bloc.stream,
-      emitsInOrder([
-        isA<EquipmentLoading>(),
-        isA<EquipmentLoaded>().having(
-          (state) => state.equipment.length,
-          'equipment list length',
-          1, // 1 equipment in Kigali
-        ).having(
-          (state) => state.equipment.first.location,
-          'location is Kigali',
-          'Kigali',
-        ),
-      ]),
-    );
+  test(
+    'emits [Loading, Loaded] with filtered data when location search is applied',
+    () async {
+      // Assert later
+      expectLater(
+        bloc.stream,
+        emitsInOrder([
+          isA<EquipmentLoading>(),
+          isA<EquipmentLoaded>()
+              .having(
+                (state) => state.equipment.length,
+                'equipment list length',
+                1, // 1 equipment in Kigali
+              )
+              .having(
+                (state) => state.equipment.first.location,
+                'location is Kigali',
+                'Kigali',
+              ),
+        ]),
+      );
 
-    // Act
-    bloc.add(const FetchEquipmentEvent(category: 'All', location: 'Kigali'));
-  });
-  
-  test('emits [Loading, Loaded] combining category AND location filters', () async {
-    // Assert later
-    expectLater(
-      bloc.stream,
-      emitsInOrder([
-        isA<EquipmentLoading>(),
-        isA<EquipmentLoaded>().having(
-          (state) => state.equipment.length,
-          'equipment list length',
-          1, // 1 Tractor in Muhanga
-        ).having(
-          (state) => state.equipment.first.name,
-          'name is Tractor C',
-          'Tractor C',
-        ),
-      ]),
-    );
+      // Act
+      bloc.add(const FetchEquipmentEvent(category: 'All', location: 'Kigali'));
+    },
+  );
 
-    // Act
-    bloc.add(const FetchEquipmentEvent(category: 'Tractors', location: 'Muhanga'));
-  });
+  test(
+    'emits [Loading, Loaded] combining category AND location filters',
+    () async {
+      // Assert later
+      expectLater(
+        bloc.stream,
+        emitsInOrder([
+          isA<EquipmentLoading>(),
+          isA<EquipmentLoaded>()
+              .having(
+                (state) => state.equipment.length,
+                'equipment list length',
+                1, // 1 Tractor in Muhanga
+              )
+              .having(
+                (state) => state.equipment.first.name,
+                'name is Tractor C',
+                'Tractor C',
+              ),
+        ]),
+      );
+
+      // Act
+      bloc.add(
+        const FetchEquipmentEvent(category: 'Tractors', location: 'Muhanga'),
+      );
+    },
+  );
 }

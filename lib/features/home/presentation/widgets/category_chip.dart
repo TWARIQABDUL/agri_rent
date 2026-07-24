@@ -3,7 +3,7 @@ import '../../../../core/theme/app_colors.dart';
 
 class CategoryChip extends StatelessWidget {
   final String label;
-  final String icon;
+  final IconData icon;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -17,6 +17,7 @@ class CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final foreground = isSelected ? AppColors.white : AppColors.primaryDark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -30,10 +31,7 @@ class CategoryChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              icon,
-              style: const TextStyle(fontSize: 16),
-            ),
+            Icon(icon, size: 18, color: foreground),
             const SizedBox(width: 8),
             Text(
               label,

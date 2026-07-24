@@ -1,20 +1,40 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'core/theme/app_colors.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/pages/splash_page.dart';
+import 'features/equipment/presentation/bloc/equipment_bloc.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/equipment/presentation/bloc/equipment_bloc.dart';
-import 'features/home/presentation/pages/home_page.dart';
-import 'core/theme/app_colors.dart';
+
+const _googleWebClientId =
+    '928210968988-dbnjmve401e9c3gkaju8fkoi5sobf1qf.apps.googleusercontent.com';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await GoogleSignIn.instance.initialize(serverClientId: _googleWebClientId);
   configureDependencies();
   runApp(const MyApp());
+}
+
+class _AppScrollBehavior extends MaterialScrollBehavior {
+  const _AppScrollBehavior();
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const ClampingScrollPhysics();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) => child;
 }
 
 class MyApp extends StatelessWidget {
@@ -28,22 +48,21 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => sl<AuthBloc>()..add(CheckAuthStatusEvent()),
         ),
-        BlocProvider(
-          create: (_) => sl<EquipmentBloc>(),
-        ),
+        BlocProvider(create: (_) => sl<EquipmentBloc>()),
       ],
       child: MaterialApp(
         title: 'AgriRent',
         debugShowCheckedModeBanner: false,
+        scrollBehavior: const _AppScrollBehavior(),
         theme: ThemeData(
           scaffoldBackgroundColor: AppColors.background,
           colorScheme: ColorScheme.fromSeed(
             seedColor: AppColors.primaryDark,
             primary: AppColors.primaryDark,
           ),
-          fontFamily: 'Roboto', // Defaulting to Roboto until custom fonts are added
+          textTheme: GoogleFonts.jostTextTheme(),
         ),
-        home: const HomePage(),
+        home: const SplashPage(),
       ),
     );
   }
