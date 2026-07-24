@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/services/preferences_service.dart';
+import '../../../../injection_container.dart';
 import '../../domain/entities/user.dart';
 import '../bloc/auth_bloc.dart';
 import 'role_selection_page.dart';
@@ -30,9 +32,51 @@ class _ProfilePageState extends State<ProfilePage> {
     'Kiswahili',
   ];
 
+  final PreferencesService _prefs = sl<PreferencesService>();
+
   int _langIndex = 0;
   bool _darkMode = false;
   UserRole _role = UserRole.farmer;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  Future<void> _loadPreferences() async {
+    final lang = await _prefs.getLanguage();
+    final dark = await _prefs.isDarkMode();
+    final role = await _prefs.getRole();
+    if (!mounted) return;
+    setState(() {
+      final idx = _languages.indexOf(lang);
+      if (idx != -1) _langIndex = idx;
+      _darkMode = dark;
+      if (role == PreferencesService.roleOwner) _role = UserRole.owner;
+      if (role == PreferencesService.roleFarmer) _role = UserRole.farmer;
+    });
+  }
+
+  Future<void> _cycleLanguage() async {
+    final next = (_langIndex + 1) % _languages.length;
+    setState(() => _langIndex = next);
+    await _prefs.setLanguage(_languages[next]);
+  }
+
+  Future<void> _setDarkMode(bool v) async {
+    setState(() => _darkMode = v);
+    await _prefs.setDarkMode(v);
+  }
+
+  Future<void> _setRole(UserRole role) async {
+    setState(() => _role = role);
+    await _prefs.setRole(
+      role == UserRole.farmer
+          ? PreferencesService.roleFarmer
+          : PreferencesService.roleOwner,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,16 +120,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icons.language,
                       label: 'Language',
                       value: _languages[_langIndex],
-                      onTap: () => setState(() {
-                        _langIndex = (_langIndex + 1) % _languages.length;
-                      }),
+                      onTap: _cycleLanguage,
                     ),
                     _rowToggle(
                       icon: Icons.dark_mode_outlined,
                       label: 'Dark mode',
                       subtitle: 'Reduce eye strain at night',
                       value: _darkMode,
-                      onChanged: (v) => setState(() => _darkMode = v),
+                      onChanged: _setDarkMode,
                     ),
                     _rowClickable(
                       icon: Icons.swap_horiz,
@@ -127,7 +169,7 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (_) => RoleSelectionPage(currentRole: _role),
       ),
     );
-    if (chosen != null) setState(() => _role = chosen);
+    if (chosen != null) await _setRole(chosen);
   }
 
   Widget _profileCard(User? user) {
