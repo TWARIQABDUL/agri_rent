@@ -131,6 +131,10 @@ class _SignInPageState extends State<SignInPage> {
                         const SizedBox(height: 20),
                         _signInButton(),
                         const SizedBox(height: 22),
+                        _orDivider(),
+                        const SizedBox(height: 16),
+                        _googleButton(),
+                        const SizedBox(height: 22),
                         _signUpFooter(),
                       ],
                     ),
@@ -317,6 +321,52 @@ class _SignInPageState extends State<SignInPage> {
                       Icon(Icons.arrow_forward, size: 19),
                     ],
                   ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _orDivider() {
+    return const Row(
+      children: [
+        Expanded(child: Divider(color: _border, thickness: 1)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'or continue with',
+            style: TextStyle(fontSize: 12, color: _muted),
+          ),
+        ),
+        Expanded(child: Divider(color: _border, thickness: 1)),
+      ],
+    );
+  }
+
+  Widget _googleButton() {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final loading = state is AuthLoading;
+        return SizedBox(
+          height: 52,
+          child: OutlinedButton.icon(
+            onPressed: loading
+                ? null
+                : () => context.read<AuthBloc>().add(
+                      SignInWithGoogleRequested(),
+                    ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: _dark,
+              side: const BorderSide(color: _border, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            icon: const Icon(Icons.g_mobiledata, size: 28, color: _dark),
+            label: const Text(
+              'Continue with Google',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
           ),
         );
       },
