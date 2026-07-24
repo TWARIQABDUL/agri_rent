@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../auth/presentation/pages/profile_page.dart';
 import '../../../equipment/presentation/bloc/equipment_bloc.dart';
 import '../widgets/active_rental_banner.dart';
 import '../widgets/category_chip.dart';
@@ -123,15 +124,22 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        CircleAvatar(
-                          backgroundColor: AppColors.primaryDark,
-                          radius: 24,
-                          child: const Text(
-                            'JB',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const ProfilePage(),
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: AppColors.primaryDark,
+                            radius: 24,
+                            child: const Text(
+                              'JB',
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ),

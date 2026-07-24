@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../home/presentation/pages/home_page.dart';
 import '../bloc/auth_bloc.dart';
+import 'sign_up_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -376,7 +377,9 @@ class _SignInPageState extends State<SignInPage> {
   Widget _signUpFooter() {
     return Center(
       child: GestureDetector(
-        onTap: () {},
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const SignUpPage()),
+        ),
         child: RichText(
           text: const TextSpan(
             text: "Don't have an account? ",

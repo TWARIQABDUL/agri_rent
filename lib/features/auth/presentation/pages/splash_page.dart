@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/services/preferences_service.dart';
+import '../../../../injection_container.dart';
 import '../../../home/presentation/pages/home_page.dart';
 import '../bloc/auth_bloc.dart';
+import 'role_selection_page.dart';
+import 'sign_in_page.dart';
+import 'sign_up_page.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -54,7 +59,7 @@ class SplashPage extends StatelessWidget {
                 SizedBox(
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: () => _goToHome(context),
+                    onPressed: () => _startOnboarding(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _accent,
                       foregroundColor: Colors.white,
@@ -82,7 +87,7 @@ class SplashPage extends StatelessWidget {
                 const SizedBox(height: 18),
                 Center(
                   child: GestureDetector(
-                    onTap: () => _goToHome(context),
+                    onTap: () => _goToSignIn(context),
                     child: RichText(
                       text: TextSpan(
                         text: 'Already have an account? ',
@@ -157,9 +162,25 @@ class SplashPage extends StatelessWidget {
     );
   }
 
-  void _goToHome(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const HomePage()),
+  Future<void> _startOnboarding(BuildContext context) async {
+    final role = await Navigator.of(context).push<UserRole>(
+      MaterialPageRoute(builder: (_) => const RoleSelectionPage()),
+    );
+    if (role == null || !context.mounted) return;
+    await sl<PreferencesService>().setRole(
+      role == UserRole.farmer
+          ? PreferencesService.roleFarmer
+          : PreferencesService.roleOwner,
+    );
+    if (!context.mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SignUpPage()),
+    );
+  }
+
+  void _goToSignIn(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SignInPage()),
     );
   }
 }
