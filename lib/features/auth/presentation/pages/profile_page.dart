@@ -5,7 +5,8 @@ import '../../../../core/services/preferences_service.dart';
 import '../../../../injection_container.dart';
 import '../../domain/entities/user.dart';
 import '../bloc/auth_bloc.dart';
-import 'role_selection_page.dart';
+import 'personal_details_page.dart';
+import 'settings_page.dart';
 import 'splash_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -25,49 +26,22 @@ class _ProfilePageState extends State<ProfilePage> {
   static const Color _redTint = Color(0xFFFDECEA);
   static const Color _red = Color(0xFFD32F2F);
 
-  static const List<String> _languages = [
-    'English',
-    'Kinyarwanda',
-    'Français',
-    'Kiswahili',
-  ];
-
   final PreferencesService _prefs = sl<PreferencesService>();
 
-  int _langIndex = 0;
-  UserRole _role = UserRole.farmer;
+  String _roleLabel = 'Farmer';
 
   @override
   void initState() {
     super.initState();
-    _loadPreferences();
+    _loadRole();
   }
 
-  Future<void> _loadPreferences() async {
-    final lang = await _prefs.getLanguage();
+  Future<void> _loadRole() async {
     final role = await _prefs.getRole();
     if (!mounted) return;
     setState(() {
-      final idx = _languages.indexOf(lang);
-      if (idx != -1) _langIndex = idx;
-      if (role == PreferencesService.roleOwner) _role = UserRole.owner;
-      if (role == PreferencesService.roleFarmer) _role = UserRole.farmer;
+      _roleLabel = role == PreferencesService.roleOwner ? 'Owner' : 'Farmer';
     });
-  }
-
-  Future<void> _cycleLanguage() async {
-    final next = (_langIndex + 1) % _languages.length;
-    setState(() => _langIndex = next);
-    await _prefs.setLanguage(_languages[next]);
-  }
-
-  Future<void> _setRole(UserRole role) async {
-    setState(() => _role = role);
-    await _prefs.setRole(
-      role == UserRole.farmer
-          ? PreferencesService.roleFarmer
-          : PreferencesService.roleOwner,
-    );
   }
 
   @override
@@ -79,11 +53,38 @@ class _ProfilePageState extends State<ProfilePage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         foregroundColor: _dark,
+        automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
         ),
         centerTitle: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: InkWell(
+              onTap: _openSettings,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  border: Border.all(color: _border, width: 1.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.settings_outlined,
+                  color: _dark,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: _border),
+        ),
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -98,46 +99,34 @@ class _ProfilePageState extends State<ProfilePage> {
           builder: (context, state) {
             final user = state is Authenticated ? state.user : null;
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _profileCard(user),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
                   _statsRow(),
                   const SizedBox(height: 24),
-                  _sectionLabel('Preferences'),
-                  _group([
-                    _rowClickable(
-                      icon: Icons.language,
-                      label: 'Language',
-                      value: _languages[_langIndex],
-                      onTap: _cycleLanguage,
+                  _menuGroup([
+                    _menuRow(
+                      icon: Icons.person_outline,
+                      label: 'Personal Details',
+                      subtitle: 'Edit info & verification (KYC)',
+                      onTap: _openPersonalDetails,
                     ),
-                    _rowClickable(
-                      icon: Icons.swap_horiz,
-                      label: 'Switch role',
-                      value: _role == UserRole.farmer ? 'Farmer' : 'Owner',
-                      onTap: _openRoleSelector,
+                    _menuRow(
+                      icon: Icons.settings_outlined,
+                      label: 'Settings',
+                      subtitle: 'Notifications, language & security',
+                      onTap: _openSettings,
                     ),
-                  ]),
-                  const SizedBox(height: 20),
-                  _sectionLabel('Account'),
-                  _group([
-                    _rowDanger(
+                    _dangerRow(
                       icon: Icons.logout,
                       label: 'Log Out',
                       onTap: () =>
                           context.read<AuthBloc>().add(SignOutRequested()),
                     ),
                   ]),
-                  const SizedBox(height: 24),
-                  const Center(
-                    child: Text(
-                      'AgriRent · Version 1.0.0',
-                      style: TextStyle(fontSize: 12, color: _muted),
-                    ),
-                  ),
                 ],
               ),
             );
@@ -147,11 +136,16 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<void> _openRoleSelector() async {
-    final chosen = await Navigator.of(context).push<UserRole>(
-      MaterialPageRoute(builder: (_) => RoleSelectionPage(currentRole: _role)),
-    );
-    if (chosen != null) await _setRole(chosen);
+  void _openSettings() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SettingsPage()));
+  }
+
+  void _openPersonalDetails() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const PersonalDetailsPage()));
   }
 
   Widget _profileCard(User? user) {
@@ -161,86 +155,94 @@ class _ProfilePageState extends State<ProfilePage> {
     final email = user?.email ?? '';
     final initials = _initialsFrom(name);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: _border, width: 1.5),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: const BoxDecoration(
-              color: _green,
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              initials,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 78,
+          height: 78,
+          decoration: const BoxDecoration(color: _tint, shape: BoxShape.circle),
+          alignment: Alignment.center,
+          child: Text(
+            initials,
+            style: const TextStyle(
+              color: _greenDark,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: _dark,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    width: 18,
+                    height: 18,
+                    decoration: const BoxDecoration(
+                      color: _green,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 3),
+              if (email.isNotEmpty)
                 Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: _dark,
-                  ),
+                  email,
+                  style: const TextStyle(fontSize: 13.5, color: _muted),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
-                if (email.isNotEmpty)
-                  Text(
-                    email,
-                    style: const TextStyle(fontSize: 13, color: _muted),
-                  ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _tint,
-                    borderRadius: BorderRadius.circular(9),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.agriculture,
-                        size: 12,
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: _tint,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.layers, size: 13, color: _greenDark),
+                    const SizedBox(width: 5),
+                    Text(
+                      '$_roleLabel · Musanze',
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
                         color: _greenDark,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _role == UserRole.farmer ? 'Farmer' : 'Owner',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: _greenDark,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -252,57 +254,41 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Row(
         children: [
-          _statCell('0', 'Rentals'),
-          _divider(),
-          _statCell('—', 'Rating'),
-          _divider(),
-          _statCell('2026', 'Member'),
+          _statCell('8', 'Rentals'),
+          _statDivider(),
+          _statCell('4.8', 'Rating'),
+          _statDivider(),
+          _statCell('2024', 'Member'),
         ],
       ),
     );
   }
 
-  Widget _divider() {
-    return Container(width: 1, height: 40, color: _border);
-  }
+  Widget _statDivider() => Container(width: 1, height: 40, color: _border);
 
   Widget _statCell(String n, String t) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 6),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
             Text(
               n,
               style: const TextStyle(
-                fontSize: 19,
-                fontWeight: FontWeight.w700,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
                 color: _dark,
               ),
             ),
             const SizedBox(height: 3),
-            Text(t, style: const TextStyle(fontSize: 11.5, color: _muted)),
+            Text(t, style: const TextStyle(fontSize: 12, color: _muted)),
           ],
         ),
       ),
     );
   }
 
-  Widget _sectionLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: _muted,
-        ),
-      ),
-    );
-  }
-
-  Widget _group(List<Widget> rows) {
+  Widget _menuGroup(List<Widget> rows) {
     final children = <Widget>[];
     for (var i = 0; i < rows.length; i++) {
       children.add(rows[i]);
@@ -320,10 +306,10 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _rowClickable({
+  Widget _menuRow({
     required IconData icon,
     required String label,
-    String? value,
+    required String subtitle,
     required VoidCallback onTap,
   }) {
     return InkWell(
@@ -332,38 +318,44 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            _rowIcon(icon),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: _tint,
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: Icon(icon, color: _greenDark, size: 20),
+            ),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: _dark,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: _dark,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 12.5, color: _muted),
+                  ),
+                ],
               ),
             ),
-            if (value != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 6),
-                child: Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: _greenDark,
-                  ),
-                ),
-              ),
-            const Icon(Icons.chevron_right, color: _muted, size: 20),
+            const Icon(Icons.chevron_right, color: _muted, size: 22),
           ],
         ),
       ),
     );
   }
 
-  Widget _rowDanger({
+  Widget _dangerRow({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
@@ -375,40 +367,26 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Row(
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: _redTint,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(11),
               ),
-              child: const Icon(Icons.logout, color: _red, size: 19),
+              child: Icon(icon, color: _red, size: 20),
             ),
             const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: _red,
-                ),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: _red,
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _rowIcon(IconData icon) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: _tint,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Icon(icon, color: _greenDark, size: 19),
     );
   }
 
