@@ -25,8 +25,9 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ctaLabel =
-        _selected == UserRole.farmer ? 'Continue as Farmer' : 'Continue as Owner';
+    final ctaLabel = _selected == UserRole.farmer
+        ? 'Continue as Farmer'
+        : 'Continue as Owner';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -128,10 +129,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: selected ? _greenTint : Colors.white,
-          border: Border.all(
-            color: selected ? _green : _border,
-            width: 1.5,
-          ),
+          border: Border.all(color: selected ? _green : _border, width: 1.5),
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
@@ -189,10 +187,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                       const SizedBox(height: 3),
                       Text(
                         subtitle,
-                        style: const TextStyle(
-                          fontSize: 12.5,
-                          color: _muted,
-                        ),
+                        style: const TextStyle(fontSize: 12.5, color: _muted),
                       ),
                     ],
                   ),
@@ -203,11 +198,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
             const SizedBox(height: 14),
             Text(
               description,
-              style: const TextStyle(
-                fontSize: 13,
-                color: _dark,
-                height: 1.5,
-              ),
+              style: const TextStyle(fontSize: 13, color: _dark, height: 1.5),
             ),
             const SizedBox(height: 9),
             ...features.map(_featureRow),
@@ -224,10 +215,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
       decoration: BoxDecoration(
         color: selected ? _green : Colors.transparent,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: selected ? _green : _border,
-          width: 2,
-        ),
+        border: Border.all(color: selected ? _green : _border, width: 2),
       ),
       child: selected
           ? const Icon(Icons.check, color: Colors.white, size: 15)

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/usecases/usecase.dart';
@@ -43,8 +43,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStateChanged>(_onAuthStateChanged);
 
     _authSubscription = authRepository.authStateChanges().listen(
-          (user) => add(AuthStateChanged(user)),
-        );
+      (user) => add(AuthStateChanged(user)),
+    );
   }
 
   Future<void> _onCheckAuthStatus(
@@ -119,10 +119,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _onAuthStateChanged(
-    AuthStateChanged event,
-    Emitter<AuthState> emit,
-  ) {
+  void _onAuthStateChanged(AuthStateChanged event, Emitter<AuthState> emit) {
     if (event.user != null) {
       emit(Authenticated(event.user!));
     } else {

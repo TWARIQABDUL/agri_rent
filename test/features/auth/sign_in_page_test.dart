@@ -22,16 +22,14 @@ class _NoopAuthRepository implements AuthRepository {
   Future<User> signInWithEmailAndPassword({
     required String email,
     required String password,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<User> signUpWithEmailAndPassword({
     required String email,
     required String password,
     String? displayName,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<User> signInWithGoogle() => throw UnimplementedError();
@@ -61,22 +59,22 @@ void main() {
   });
 
   Widget makeTestable() => MaterialApp(
-        home: BlocProvider<AuthBloc>.value(
-          value: bloc,
-          child: const SignInPage(),
-        ),
-      );
+    home: BlocProvider<AuthBloc>.value(value: bloc, child: const SignInPage()),
+  );
 
   group('SignInPage', () {
-    testWidgets('renders the expected layout elements',
-        (WidgetTester tester) async {
+    testWidgets('renders the expected layout elements', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(makeTestable());
       await tester.pump();
 
       expect(find.text('Sign In'), findsWidgets);
       expect(find.text('Welcome back,'), findsOneWidget);
-      expect(find.text('Sign in to continue renting equipment.'),
-          findsOneWidget);
+      expect(
+        find.text('Sign in to continue renting equipment.'),
+        findsOneWidget,
+      );
       expect(find.byType(TextFormField), findsNWidgets(2));
       expect(find.text('Forgot password?'), findsOneWidget);
       expect(find.text('or continue with'), findsOneWidget);
@@ -89,8 +87,9 @@ void main() {
       );
     });
 
-    testWidgets('shows required-field errors when submitting empty form',
-        (WidgetTester tester) async {
+    testWidgets('shows required-field errors when submitting empty form', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(makeTestable());
       await tester.pump();
 
@@ -101,8 +100,9 @@ void main() {
       expect(find.text('Password is required'), findsOneWidget);
     });
 
-    testWidgets('shows email format error for invalid email',
-        (WidgetTester tester) async {
+    testWidgets('shows email format error for invalid email', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(makeTestable());
       await tester.pump();
 
@@ -116,8 +116,9 @@ void main() {
       expect(find.text('Password is required'), findsNothing);
     });
 
-    testWidgets('shows password length error for short password',
-        (WidgetTester tester) async {
+    testWidgets('shows password length error for short password', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(makeTestable());
       await tester.pump();
 
@@ -127,8 +128,10 @@ void main() {
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
       await tester.pump();
 
-      expect(find.text('Password must be at least 6 characters'),
-          findsOneWidget);
+      expect(
+        find.text('Password must be at least 6 characters'),
+        findsOneWidget,
+      );
       expect(find.text('Enter a valid email address'), findsNothing);
     });
   });

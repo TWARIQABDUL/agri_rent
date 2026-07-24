@@ -153,11 +153,7 @@ class SplashPage extends StatelessWidget {
           color: Colors.white.withValues(alpha: 0.05),
           shape: BoxShape.circle,
         ),
-        child: const Icon(
-          Icons.agriculture,
-          size: 120,
-          color: _accent,
-        ),
+        child: const Icon(Icons.agriculture, size: 120, color: _accent),
       ),
     );
   }
@@ -173,14 +169,14 @@ class SplashPage extends StatelessWidget {
           : PreferencesService.roleOwner,
     );
     if (!context.mounted) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const SignUpPage()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SignUpPage()));
   }
 
   void _goToSignIn(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const SignInPage()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SignInPage()));
   }
 }

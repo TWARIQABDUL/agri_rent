@@ -35,20 +35,24 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // Fetch initial equipment (All)
-    context.read<EquipmentBloc>().add(const FetchEquipmentEvent(category: 'All'));
+    context.read<EquipmentBloc>().add(
+      const FetchEquipmentEvent(category: 'All'),
+    );
   }
 
   void _onCategorySelected(int index) {
     setState(() {
       _selectedCategoryIndex = index;
     });
-    
+
     final category = _categories[index]['label'];
-    context.read<EquipmentBloc>().add(FetchEquipmentEvent(
-      category: category,
-      location: _currentLocationFilter,
-      maxPrice: _currentMaxPriceFilter,
-    ));
+    context.read<EquipmentBloc>().add(
+      FetchEquipmentEvent(
+        category: category,
+        location: _currentLocationFilter,
+        maxPrice: _currentMaxPriceFilter,
+      ),
+    );
   }
 
   void _openFilterSheet() {
@@ -67,17 +71,21 @@ class _HomePageState extends State<HomePage> {
             initialMaxPrice: _currentMaxPriceFilter,
             onApply: (category, location, maxPrice) {
               setState(() {
-                _selectedCategoryIndex = _categories.indexWhere((c) => c['label'] == category);
+                _selectedCategoryIndex = _categories.indexWhere(
+                  (c) => c['label'] == category,
+                );
                 if (_selectedCategoryIndex == -1) _selectedCategoryIndex = 0;
                 _currentLocationFilter = location;
                 _currentMaxPriceFilter = maxPrice;
               });
 
-              context.read<EquipmentBloc>().add(FetchEquipmentEvent(
-                category: category,
-                location: location,
-                maxPrice: maxPrice,
-              ));
+              context.read<EquipmentBloc>().add(
+                FetchEquipmentEvent(
+                  category: category,
+                  location: location,
+                  maxPrice: maxPrice,
+                ),
+              );
             },
           ),
         );
@@ -93,7 +101,9 @@ class _HomePageState extends State<HomePage> {
         child: Stack(
           children: [
             SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 100), // Padding for bottom nav
+              padding: const EdgeInsets.only(
+                bottom: 100,
+              ), // Padding for bottom nav
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -160,22 +170,34 @@ class _HomePageState extends State<HomePage> {
                             child: TextField(
                               onChanged: (value) {
                                 setState(() {
-                                  _currentLocationFilter = value.isEmpty ? 'Anywhere' : value;
+                                  _currentLocationFilter = value.isEmpty
+                                      ? 'Anywhere'
+                                      : value;
                                 });
                                 // Add location filter based on search input
-                                final category = _categories[_selectedCategoryIndex]['label'];
-                                context.read<EquipmentBloc>().add(FetchEquipmentEvent(
-                                  category: category,
-                                  location: _currentLocationFilter,
-                                  maxPrice: _currentMaxPriceFilter,
-                                ));
+                                final category =
+                                    _categories[_selectedCategoryIndex]['label'];
+                                context.read<EquipmentBloc>().add(
+                                  FetchEquipmentEvent(
+                                    category: category,
+                                    location: _currentLocationFilter,
+                                    maxPrice: _currentMaxPriceFilter,
+                                  ),
+                                );
                               },
                               decoration: const InputDecoration(
                                 hintText: 'Search by location...',
-                                hintStyle: TextStyle(color: AppColors.textSecondary),
-                                prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                                hintStyle: TextStyle(
+                                  color: AppColors.textSecondary,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: AppColors.textSecondary,
+                                ),
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(vertical: 16),
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                               ),
                             ),
                           ),
@@ -189,7 +211,10 @@ class _HomePageState extends State<HomePage> {
                               color: AppColors.primaryDark,
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: const Icon(Icons.tune, color: AppColors.white),
+                            child: const Icon(
+                              Icons.tune,
+                              color: AppColors.white,
+                            ),
                           ),
                         ),
                       ],
@@ -247,16 +272,17 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           }
-                          
+
                           return GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.75,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                            ),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.75,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                ),
                             itemCount: state.equipment.length,
                             itemBuilder: (context, index) {
                               final equipment = state.equipment[index];
@@ -272,7 +298,7 @@ class _HomePageState extends State<HomePage> {
                             },
                           );
                         }
-                        
+
                         return const SizedBox.shrink();
                       },
                     ),
@@ -280,7 +306,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            
+
             // Bottom Navigation
             Positioned(
               left: 0,

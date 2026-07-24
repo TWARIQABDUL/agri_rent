@@ -142,9 +142,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     _rowDanger(
                       icon: Icons.logout,
                       label: 'Log Out',
-                      onTap: () => context
-                          .read<AuthBloc>()
-                          .add(SignOutRequested()),
+                      onTap: () =>
+                          context.read<AuthBloc>().add(SignOutRequested()),
                     ),
                   ]),
                   const SizedBox(height: 24),
@@ -165,9 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _openRoleSelector() async {
     final chosen = await Navigator.of(context).push<UserRole>(
-      MaterialPageRoute(
-        builder: (_) => RoleSelectionPage(currentRole: _role),
-      ),
+      MaterialPageRoute(builder: (_) => RoleSelectionPage(currentRole: _role)),
     );
     if (chosen != null) await _setRole(chosen);
   }
@@ -226,8 +223,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 const SizedBox(height: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _tint,
                     borderRadius: BorderRadius.circular(9),
@@ -235,8 +234,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.agriculture,
-                          size: 12, color: _greenDark),
+                      const Icon(
+                        Icons.agriculture,
+                        size: 12,
+                        color: _greenDark,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         _role == UserRole.farmer ? 'Farmer' : 'Owner',

@@ -66,12 +66,12 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
     context.read<AuthBloc>().add(
-          SignUpWithEmailRequested(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            displayName: _nameController.text.trim(),
-          ),
-        );
+      SignUpWithEmailRequested(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        displayName: _nameController.text.trim(),
+      ),
+    );
   }
 
   @override
@@ -198,10 +198,7 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Container(
           width: 148,
           height: 148,
-          decoration: const BoxDecoration(
-            color: _tint,
-            shape: BoxShape.circle,
-          ),
+          decoration: const BoxDecoration(color: _tint, shape: BoxShape.circle),
           child: Container(
             width: 76,
             height: 114,
@@ -262,7 +259,9 @@ class _SignUpPageState extends State<SignUpPage> {
         icon: Icons.lock_outline,
         suffix: IconButton(
           icon: Icon(
-            _obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+            _obscure
+                ? Icons.visibility_outlined
+                : Icons.visibility_off_outlined,
             color: const Color(0xFF9CA3AF),
             size: 20,
           ),
@@ -278,9 +277,9 @@ class _SignUpPageState extends State<SignUpPage> {
     Widget? suffix,
   }) {
     OutlineInputBorder border(Color c) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: c, width: 1.5),
-        );
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide(color: c, width: 1.5),
+    );
     return InputDecoration(
       hintText: hint,
       hintStyle: const TextStyle(color: _muted, fontSize: 14),
@@ -399,10 +398,7 @@ class _SignUpPageState extends State<SignUpPage> {
             children: [
               TextSpan(
                 text: 'Sign In',
-                style: TextStyle(
-                  color: _green,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(color: _green, fontWeight: FontWeight.w700),
               ),
             ],
           ),

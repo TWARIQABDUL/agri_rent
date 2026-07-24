@@ -49,11 +49,11 @@ class _SignInPageState extends State<SignInPage> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     context.read<AuthBloc>().add(
-          SignInWithEmailRequested(
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-          ),
-        );
+      SignInWithEmailRequested(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      ),
+    );
   }
 
   @override
@@ -200,10 +200,7 @@ class _SignInPageState extends State<SignInPage> {
         child: Container(
           width: 148,
           height: 148,
-          decoration: const BoxDecoration(
-            color: _tint,
-            shape: BoxShape.circle,
-          ),
+          decoration: const BoxDecoration(color: _tint, shape: BoxShape.circle),
           child: Container(
             width: 76,
             height: 114,
@@ -250,7 +247,9 @@ class _SignInPageState extends State<SignInPage> {
         icon: Icons.lock_outline,
         suffix: IconButton(
           icon: Icon(
-            _obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+            _obscure
+                ? Icons.visibility_outlined
+                : Icons.visibility_off_outlined,
             color: const Color(0xFF9CA3AF),
             size: 20,
           ),
@@ -266,9 +265,9 @@ class _SignInPageState extends State<SignInPage> {
     Widget? suffix,
   }) {
     OutlineInputBorder border(Color c) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: c, width: 1.5),
-        );
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide(color: c, width: 1.5),
+    );
     return InputDecoration(
       hintText: hint,
       hintStyle: const TextStyle(color: _muted, fontSize: 14),
@@ -353,9 +352,8 @@ class _SignInPageState extends State<SignInPage> {
           child: OutlinedButton.icon(
             onPressed: loading
                 ? null
-                : () => context.read<AuthBloc>().add(
-                      SignInWithGoogleRequested(),
-                    ),
+                : () =>
+                      context.read<AuthBloc>().add(SignInWithGoogleRequested()),
             style: OutlinedButton.styleFrom(
               foregroundColor: _dark,
               side: const BorderSide(color: _border, width: 1.5),
@@ -377,9 +375,9 @@ class _SignInPageState extends State<SignInPage> {
   Widget _signUpFooter() {
     return Center(
       child: GestureDetector(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const SignUpPage()),
-        ),
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const SignUpPage())),
         child: RichText(
           text: const TextSpan(
             text: "Don't have an account? ",
@@ -387,10 +385,7 @@ class _SignInPageState extends State<SignInPage> {
             children: [
               TextSpan(
                 text: 'Sign Up',
-                style: TextStyle(
-                  color: _green,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(color: _green, fontWeight: FontWeight.w700),
               ),
             ],
           ),

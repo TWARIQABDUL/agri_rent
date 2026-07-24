@@ -29,16 +29,16 @@ class Equipment extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        ownerId,
-        description,
-        pricePerDay,
-        pricePerMonth,
-        status,
-        category,
-        image,
-        location,
-        rating,
-      ];
+    id,
+    name,
+    ownerId,
+    description,
+    pricePerDay,
+    pricePerMonth,
+    status,
+    category,
+    image,
+    location,
+    rating,
+  ];
 }

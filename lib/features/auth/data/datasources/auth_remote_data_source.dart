@@ -94,10 +94,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> signOut() async {
-    await Future.wait([
-      firebaseAuth.signOut(),
-      googleSignIn.signOut(),
-    ]);
+    await Future.wait([firebaseAuth.signOut(), googleSignIn.signOut()]);
   }
 
   @override
@@ -109,8 +106,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Stream<UserModel?> authStateChanges() {
-    return firebaseAuth
-        .authStateChanges()
-        .map((user) => user == null ? null : UserModel.fromFirebaseUser(user));
+    return firebaseAuth.authStateChanges().map(
+      (user) => user == null ? null : UserModel.fromFirebaseUser(user),
+    );
   }
 }

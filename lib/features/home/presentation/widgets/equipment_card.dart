@@ -48,7 +48,7 @@ class EquipmentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -65,7 +65,9 @@ class EquipmentCard extends StatelessWidget {
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Color(0xFFF0F4F8), // Light placeholder background
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
                   ),
                   child: Center(
                     child: Text(
@@ -91,7 +93,10 @@ class EquipmentCard extends StatelessWidget {
                   bottom: 8,
                   left: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -128,7 +133,11 @@ class EquipmentCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(Icons.location_on, size: 10, color: AppColors.textSecondary),
+                    const Icon(
+                      Icons.location_on,
+                      size: 10,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(width: 2),
                     Expanded(
                       child: Text(

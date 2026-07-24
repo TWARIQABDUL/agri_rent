@@ -14,10 +14,7 @@ class ActiveRentalBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Text(
-            '🚜',
-            style: TextStyle(fontSize: 32),
-          ),
+          const Text('🚜', style: TextStyle(fontSize: 32)),
           const SizedBox(width: 16),
           const Expanded(
             child: Column(
@@ -25,10 +22,7 @@ class ActiveRentalBanner extends StatelessWidget {
               children: [
                 Text(
                   'Active Rental',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
                 ),
                 SizedBox(height: 4),
                 Text(

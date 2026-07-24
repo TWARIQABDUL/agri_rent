@@ -10,9 +10,7 @@ import 'core/theme/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   configureDependencies();
   runApp(const MyApp());
 }
@@ -28,9 +26,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => sl<AuthBloc>()..add(CheckAuthStatusEvent()),
         ),
-        BlocProvider(
-          create: (_) => sl<EquipmentBloc>(),
-        ),
+        BlocProvider(create: (_) => sl<EquipmentBloc>()),
       ],
       child: MaterialApp(
         title: 'AgriRent',
@@ -41,7 +37,8 @@ class MyApp extends StatelessWidget {
             seedColor: AppColors.primaryDark,
             primary: AppColors.primaryDark,
           ),
-          fontFamily: 'Roboto', // Defaulting to Roboto until custom fonts are added
+          fontFamily:
+              'Roboto', // Defaulting to Roboto until custom fonts are added
         ),
         home: const SplashPage(),
       ),
