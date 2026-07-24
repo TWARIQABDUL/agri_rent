@@ -134,22 +134,15 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const ProfilePage(),
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            backgroundColor: AppColors.primaryDark,
-                            radius: 24,
-                            child: const Text(
-                              'JB',
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                        CircleAvatar(
+                          backgroundColor: AppColors.primaryDark,
+                          radius: 24,
+                          child: const Text(
+                            'JB',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
                             ),
                           ),
                         ),
@@ -315,6 +308,12 @@ class _HomePageState extends State<HomePage> {
               child: CustomBottomNav(
                 currentIndex: _currentNavIndex,
                 onTap: (index) {
+                  if (index == 4) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ProfilePage()),
+                    );
+                    return;
+                  }
                   setState(() {
                     _currentNavIndex = index;
                   });
