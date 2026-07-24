@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'firebase_options.dart';
-import 'injection_container.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'core/theme/app_colors.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/splash_page.dart';
 import 'features/equipment/presentation/bloc/equipment_bloc.dart';
-import 'core/theme/app_colors.dart';
+import 'firebase_options.dart';
+import 'injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,8 +39,7 @@ class MyApp extends StatelessWidget {
             seedColor: AppColors.primaryDark,
             primary: AppColors.primaryDark,
           ),
-          fontFamily:
-              'Roboto', // Defaulting to Roboto until custom fonts are added
+          textTheme: GoogleFonts.jostTextTheme(),
         ),
         home: const SplashPage(),
       ),
