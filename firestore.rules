@@ -1,0 +1,174 @@
+rules_version = '2';
+
+// AgriRent Firestore security rules.
+//
+// The Flutter client holds no secrets, so every write it sends is treated as
+// attacker-controlled. These rules re-check three things on the server for each
+// request: who is asking, whether they own the record, and whether the payload
+// has a legal shape. Anything derived (ratings, booking counts, payout flags,
+// KYC verification) is closed to clients entirely.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------- identity
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // One get() per request, reused by the predicates below.
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function hasProfile() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    // Listing writes are gated on KYC: an account is only an owner in the eyes
+    // of these rules once an administrator has set `verified` to true.
+    function isVerifiedOwner() {
+      return hasProfile() && profile().role == 'owner' && profile().verified == true;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // ------------------------------------------------------------------- users
+
+    match /users/{uid} {
+      allow read: if isSelf(uid);
+
+      // A client may create its own profile and declare a role, but never
+      // arrive already verified.
+      allow create: if isSelf(uid)
+        && incoming().role in ['owner', 'farmer']
+        && incoming().verified == false
+        && incoming().createdAt == request.time;
+
+      // `verified`, `createdAt` and any trust field are absent from the allowed
+      // set, so an update touching one is rejected outright.
+      allow update: if isSelf(uid)
+        && incoming().role in ['owner', 'farmer']
+        && changedKeys().hasOnly([
+          'role', 'displayName', 'email', 'phone', 'district', 'updatedAt'
+        ]);
+
+      allow delete: if false;
+    }
+
+    // --------------------------------------------------------------- equipment
+
+    function validCategory(category) {
+      return category in ['Tractors', 'Pumps', 'Sprayers', 'Harvesters'];
+    }
+
+    // Shape and range checks run on create and on update. An update that sets
+    // pricePerDay to a string, to zero, or to a negative number is as invalid
+    // as a create that does.
+    function validListing() {
+      return incoming().name is string
+        && incoming().name.size() >= 3
+        && incoming().name.size() <= 80
+        && validCategory(incoming().category)
+        && incoming().description is string
+        && incoming().description.size() >= 20
+        && incoming().description.size() <= 1000
+        && incoming().pricePerDay is number
+        && incoming().pricePerDay > 0
+        && incoming().pricePerDay <= 10000000
+        && incoming().pricePerMonth is number
+        && incoming().pricePerMonth >= 0
+        && incoming().location is string
+        && incoming().location.size() >= 2
+        && incoming().location.size() <= 120
+        && incoming().image is string
+        && incoming().image.size() <= 500
+        && incoming().status in ['available', 'paused'];
+    }
+
+    match /equipment/{listingId} {
+      // Browsing is open to any signed-in user; the catalogue is the product.
+      allow read: if isSignedIn();
+
+      allow create: if isVerifiedOwner()
+        && incoming().ownerId == request.auth.uid
+        && validListing()
+        && incoming().status == 'available'
+        && incoming().rating == 0
+        && incoming().bookingCount == 0
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      // Editing and pausing share this rule. `ownerId`, `createdAt`, `rating`
+      // and `bookingCount` are outside the allowed key set, which is what stops
+      // an owner reassigning a listing or inflating its reputation.
+      allow update: if isVerifiedOwner()
+        && resource.data.ownerId == request.auth.uid
+        && validListing()
+        && incoming().updatedAt == request.time
+        && changedKeys().hasOnly([
+          'name', 'category', 'description', 'pricePerDay', 'pricePerMonth',
+          'location', 'image', 'status', 'updatedAt'
+        ]);
+
+      // Listings are paused, never deleted, so the rental history behind them
+      // stays intact.
+      allow delete: if false;
+    }
+
+    // ----------------------------------------------------------------- rentals
+
+    match /rentals/{rentalId} {
+      allow read: if isSignedIn()
+        && (resource.data.renterId == request.auth.uid
+          || resource.data.ownerId == request.auth.uid);
+
+      // A farmer opens a request against a listing; money and payout state are
+      // fixed by the server-side shape, not chosen by the client.
+      allow create: if isSignedIn()
+        && incoming().renterId == request.auth.uid
+        && incoming().ownerId is string
+        && incoming().equipmentId is string
+        && incoming().status == 'pending'
+        && incoming().paidOut == false
+        && incoming().totalAmount is number
+        && incoming().totalAmount > 0
+        && incoming().startDate is timestamp
+        && incoming().endDate is timestamp
+        && incoming().endDate >= incoming().startDate
+        && incoming().createdAt == request.time;
+
+      // The owner answers and advances the rental; the renter may only walk
+      // away from a request nobody has answered yet. Neither side can touch
+      // `paidOut` or `totalAmount`.
+      allow update: if isSignedIn()
+        && changedKeys().hasOnly(['status', 'updatedAt'])
+        && (
+          (resource.data.ownerId == request.auth.uid
+            && incoming().status in ['accepted', 'declined', 'active', 'completed'])
+          ||
+          (resource.data.renterId == request.auth.uid
+            && resource.data.status == 'pending'
+            && incoming().status == 'cancelled')
+        );
+
+      allow delete: if false;
+    }
+
+    // Anything not matched above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
