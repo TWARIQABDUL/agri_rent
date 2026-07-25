@@ -61,11 +61,17 @@ class OwnerPrimaryButton extends StatelessWidget {
                     Icon(icon, size: 19),
                     const SizedBox(width: 8),
                   ],
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
+                  // Flexible so a long label or a large text scale shortens the
+                  // text instead of overflowing the button.
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -125,6 +131,8 @@ class OwnerSecondaryButton extends StatelessWidget {
               )
             : Text(
                 label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
