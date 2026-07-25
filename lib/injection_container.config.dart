@@ -42,6 +42,9 @@ import 'features/owner/domain/usecases/get_owner_summary.dart' as _i475;
 import 'features/owner/domain/usecases/publish_listing.dart' as _i158;
 import 'features/owner/domain/usecases/set_listing_paused.dart' as _i582;
 import 'features/owner/domain/usecases/update_listing.dart' as _i454;
+import 'features/owner/presentation/bloc/listing_form_bloc.dart' as _i68;
+import 'features/owner/presentation/bloc/owner_dashboard_bloc.dart' as _i624;
+import 'features/owner/presentation/bloc/owner_listings_bloc.dart' as _i595;
 import 'injection_container.dart' as _i809;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -101,6 +104,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i613.GetEquipment>(
       () => _i613.GetEquipment(gh<_i683.EquipmentRepository>()),
     );
+    gh.factory<_i68.ListingFormBloc>(
+      () => _i68.ListingFormBloc(
+        gh<_i158.PublishListing>(),
+        gh<_i454.UpdateListing>(),
+      ),
+    );
     gh.lazySingleton<_i191.GetCurrentUser>(
       () => _i191.GetCurrentUser(gh<_i1015.AuthRepository>()),
     );
@@ -119,6 +128,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i825.EquipmentBloc>(
       () => _i825.EquipmentBloc(gh<_i613.GetEquipment>()),
     );
+    gh.factory<_i624.OwnerDashboardBloc>(
+      () => _i624.OwnerDashboardBloc(
+        gh<_i475.GetOwnerSummary>(),
+        gh<_i721.EnsureOwnerProfile>(),
+      ),
+    );
     gh.factory<_i363.AuthBloc>(
       () => _i363.AuthBloc(
         gh<_i509.SignInWithEmail>(),
@@ -127,6 +142,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i872.SignOut>(),
         gh<_i191.GetCurrentUser>(),
         gh<_i1015.AuthRepository>(),
+      ),
+    );
+    gh.factory<_i595.OwnerListingsBloc>(
+      () => _i595.OwnerListingsBloc(
+        gh<_i608.GetOwnerListings>(),
+        gh<_i582.SetListingPaused>(),
       ),
     );
     return this;
