@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../main_shell/main_shell.dart';
 import '../bloc/auth_bloc.dart';
@@ -436,7 +437,11 @@ class _SignInPageState extends State<SignInPage> {
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            icon: const Icon(Icons.g_mobiledata, size: 28, color: _dark),
+            icon: SvgPicture.asset(
+              'assets/images/google_logo.svg',
+              height: 20,
+              width: 20,
+            ),
             label: const Text(
               'Continue with Google',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
