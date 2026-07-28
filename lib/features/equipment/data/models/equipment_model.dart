@@ -14,6 +14,11 @@ class EquipmentModel extends Equipment {
     required super.image,
     required super.location,
     required super.rating,
+    super.ownerName,
+    super.reviewCount,
+    super.pricePerHour,
+    super.pricePerHectare,
+    super.specs,
   });
 
   factory EquipmentModel.fromFirestore(DocumentSnapshot doc) {
@@ -30,6 +35,14 @@ class EquipmentModel extends Equipment {
       image: data['image'] ?? '',
       location: data['location'] ?? '',
       rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
+      ownerName: data['ownerName'] ?? '',
+      reviewCount: (data['reviewCount'] as num?)?.toInt() ?? 0,
+      pricePerHour: (data['pricePerHour'] as num?)?.toDouble() ?? 0.0,
+      pricePerHectare: (data['pricePerHectare'] as num?)?.toDouble() ?? 0.0,
+      specs: (data['specs'] as Map?)?.map(
+            (key, value) => MapEntry(key.toString(), value.toString()),
+          ) ??
+          const {},
     );
   }
 
@@ -45,6 +58,11 @@ class EquipmentModel extends Equipment {
       'image': image,
       'location': location,
       'rating': rating,
+      'ownerName': ownerName,
+      'reviewCount': reviewCount,
+      'pricePerHour': pricePerHour,
+      'pricePerHectare': pricePerHectare,
+      'specs': specs,
     };
   }
 }
