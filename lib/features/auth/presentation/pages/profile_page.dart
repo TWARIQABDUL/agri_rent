@@ -38,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadRole() async {
     final role = await _prefs.getRole();
+    debugPrint('[AgriRent][ProfilePage] local role read: $role');
     if (!mounted) return;
     setState(() {
       _roleLabel = role == PreferencesService.roleOwner ? 'Owner' : 'Farmer';
