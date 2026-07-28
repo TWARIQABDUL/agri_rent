@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../booking/presentation/pages/equipment_detail_page.dart';
 import '../../../equipment/presentation/bloc/equipment_bloc.dart';
 import '../widgets/active_rental_banner.dart';
 import '../widgets/category_chip.dart';
@@ -292,14 +293,25 @@ class _HomePageState extends State<HomePage> {
                         itemCount: state.equipment.length,
                         itemBuilder: (context, index) {
                           final equipment = state.equipment[index];
-                          return EquipmentCard(
-                            name: equipment.name,
-                            ownerId: equipment.ownerId,
-                            pricePerDay: equipment.pricePerDay,
-                            location: equipment.location,
-                            rating: equipment.rating,
-                            type: equipment.category,
-                            image: equipment.image,
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => EquipmentDetailPage(
+                                    equipment: equipment,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: EquipmentCard(
+                              name: equipment.name,
+                              ownerId: equipment.ownerId,
+                              pricePerDay: equipment.pricePerDay,
+                              location: equipment.location,
+                              rating: equipment.rating,
+                              type: equipment.category,
+                              image: equipment.image,
+                            ),
                           );
                         },
                       );
