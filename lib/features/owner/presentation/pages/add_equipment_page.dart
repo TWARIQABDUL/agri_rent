@@ -98,35 +98,49 @@ class _AddEquipmentPageState extends State<AddEquipmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ListingFormBloc, ListingFormState>(
+    return BlocListener<ListingFormBloc, ListingFormState>(
       listener: _onStateChange,
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: AppColors.white,
-          appBar: _appBar(state),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
-                  child: StepIndicator(
-                    currentStep: state.step,
-                    stepCount: ListingFormState.stepCount,
-                    stepTitle: AddEquipmentPage.stepTitles[state.step],
+      child: BlocBuilder<ListingFormBloc, ListingFormState>(
+        builder: (context, state) {
+          // Guard: once the form is submitting or done the controllers must not
+          // be touched.  The listener handles navigation / errors at that point.
+          if (state.isSubmitting || state.status == ListingFormStatus.success) {
+            return Scaffold(
+              backgroundColor: AppColors.white,
+              appBar: _appBar(state),
+              body: const Center(
+                child: CircularProgressIndicator(color: AppColors.green),
+              ),
+            );
+          }
+
+          return Scaffold(
+            backgroundColor: AppColors.white,
+            appBar: _appBar(state),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+                    child: StepIndicator(
+                      currentStep: state.step,
+                      stepCount: ListingFormState.stepCount,
+                      stepTitle: AddEquipmentPage.stepTitles[state.step],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                    child: _stepContent(state),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                      child: _stepContent(state),
+                    ),
                   ),
-                ),
-                _footer(state),
-              ],
+                  _footer(state),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
