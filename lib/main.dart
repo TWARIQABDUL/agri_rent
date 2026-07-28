@@ -17,7 +17,7 @@ const _googleWebClientId =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await GoogleSignIn.instance.initialize(serverClientId: _googleWebClientId);
+  await GoogleSignIn.instance.initialize(clientId: _googleWebClientId);
   configureDependencies();
   runApp(const MyApp());
 }
