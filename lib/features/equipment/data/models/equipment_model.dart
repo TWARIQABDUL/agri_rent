@@ -26,8 +26,15 @@ class EquipmentModel extends Equipment {
 
   factory EquipmentModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    return EquipmentModel.fromMap(id: doc.id, data: data);
+  }
+
+  factory EquipmentModel.fromMap({
+    required String id,
+    required Map<String, dynamic> data,
+  }) {
     return EquipmentModel(
-      id: doc.id,
+      id: id,
       name: data['name'] ?? '',
       ownerId: data['ownerId'] ?? '',
       description: data['description'] ?? '',
@@ -50,6 +57,30 @@ class EquipmentModel extends Equipment {
       bookingCount: (data['bookingCount'] as num?)?.toInt() ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+    );
+  }
+
+  factory EquipmentModel.fromEntity(Equipment equipment) {
+    return EquipmentModel(
+      id: equipment.id,
+      name: equipment.name,
+      ownerId: equipment.ownerId,
+      description: equipment.description,
+      pricePerDay: equipment.pricePerDay,
+      pricePerMonth: equipment.pricePerMonth,
+      status: equipment.status,
+      category: equipment.category,
+      image: equipment.image,
+      location: equipment.location,
+      rating: equipment.rating,
+      ownerName: equipment.ownerName,
+      reviewCount: equipment.reviewCount,
+      pricePerHour: equipment.pricePerHour,
+      pricePerHectare: equipment.pricePerHectare,
+      specs: equipment.specs,
+      bookingCount: equipment.bookingCount,
+      createdAt: equipment.createdAt,
+      updatedAt: equipment.updatedAt,
     );
   }
 
