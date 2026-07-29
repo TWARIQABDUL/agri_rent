@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
- 
+
 import 'core/theme/app_colors.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/splash_page.dart';
+import 'features/bookings/presentation/bloc/booking_bloc.dart';
 import 'features/equipment/presentation/bloc/equipment_bloc.dart';
+import 'features/favorites/presentation/cubit/favorites_cubit.dart';
+import 'features/main_shell/farmer_navigation_cubit.dart';
+import 'features/wallet/presentation/cubit/wallet_cubit.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart';
 
@@ -60,6 +64,10 @@ class MyApp extends StatelessWidget {
           create: (_) => sl<AuthBloc>()..add(CheckAuthStatusEvent()),
         ),
         BlocProvider(create: (_) => sl<EquipmentBloc>()),
+        BlocProvider(create: (_) => sl<BookingBloc>()),
+        BlocProvider(create: (_) => sl<FavoritesCubit>()),
+        BlocProvider(create: (_) => sl<WalletCubit>()),
+        BlocProvider(create: (_) => FarmerNavigationCubit()),
       ],
       child: MaterialApp(
         title: 'AgriRent',

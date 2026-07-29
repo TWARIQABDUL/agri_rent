@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class EquipmentCard extends StatelessWidget {
+  final String equipmentId;
   final String name;
   final String ownerId;
   final double pricePerDay;
@@ -9,9 +10,12 @@ class EquipmentCard extends StatelessWidget {
   final double rating;
   final String type;
   final String image;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteTap;
 
   const EquipmentCard({
     super.key,
+    this.equipmentId = '',
     required this.name,
     required this.ownerId,
     required this.pricePerDay,
@@ -19,6 +23,8 @@ class EquipmentCard extends StatelessWidget {
     required this.rating,
     required this.type,
     required this.image,
+    this.isFavorite = false,
+    this.onFavoriteTap,
   });
 
   IconData _getIconForType() {
@@ -96,13 +102,25 @@ class EquipmentCard extends StatelessWidget {
                 Positioned(
                   top: 8,
                   right: 8,
-                  child: CircleAvatar(
-                    backgroundColor: AppColors.primaryDark,
-                    radius: 14,
-                    child: const Icon(
-                      Icons.favorite_border,
-                      color: AppColors.white,
-                      size: 14,
+                  child: Semantics(
+                    button: true,
+                    label: isFavorite
+                        ? 'Remove $name from favorites'
+                        : 'Add $name to favorites',
+                    child: GestureDetector(
+                      key: ValueKey('favorite-$equipmentId'),
+                      onTap: onFavoriteTap,
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.primaryDark,
+                        radius: 16,
+                        child: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite
+                              ? Colors.redAccent
+                              : AppColors.white,
+                          size: 17,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -171,17 +189,22 @@ class EquipmentCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'RWF ${pricePerDay.toInt()}/day',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: AppColors.primaryDark,
+                    Expanded(
+                      child: Text(
+                        'RWF ${pricePerDay.toInt()}/day',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: AppColors.primaryDark,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 4),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(
                           Icons.star,

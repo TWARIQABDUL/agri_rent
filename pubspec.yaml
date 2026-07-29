@@ -1,5 +1,5 @@
 name: agri_rent
-description: "A new Flutter project."
+description: "A Firebase marketplace for agricultural equipment rentals."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -60,6 +60,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   injectable_generator: ^3.0.2
   build_runner: ^2.15.1
+  fake_cloud_firestore: ^4.2.0
+  firebase_auth_mocks: ^0.15.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

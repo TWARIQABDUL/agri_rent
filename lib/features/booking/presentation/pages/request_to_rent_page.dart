@@ -114,6 +114,9 @@ class _RequestToRentPageState extends State<RequestToRentPage> {
             params: CreateBookingParams(
               equipment: widget.equipment,
               farmerId: authState.user.id,
+              farmerName: authState.user.displayName?.trim().isNotEmpty == true
+                  ? authState.user.displayName!.trim()
+                  : authState.user.email.split('@').first,
               rateType: _rateType,
               rate: _rate,
               duration: _duration,

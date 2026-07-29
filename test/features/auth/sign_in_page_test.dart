@@ -112,7 +112,9 @@ void main() {
       await tester.pumpWidget(makeTestable());
       await tester.pump();
 
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Sign In'));
+      await tester.ensureVisible(
+        find.widgetWithText(ElevatedButton, 'Sign In'),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
       await tester.pump();
@@ -130,7 +132,9 @@ void main() {
       final fields = find.byType(TextFormField);
       await tester.enterText(fields.at(0), 'not-an-email');
       await tester.enterText(fields.at(1), 'validpass');
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Sign In'));
+      await tester.ensureVisible(
+        find.widgetWithText(ElevatedButton, 'Sign In'),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
       await tester.pump();
@@ -148,7 +152,9 @@ void main() {
       final fields = find.byType(TextFormField);
       await tester.enterText(fields.at(0), 'jane@example.com');
       await tester.enterText(fields.at(1), '123');
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Sign In'));
+      await tester.ensureVisible(
+        find.widgetWithText(ElevatedButton, 'Sign In'),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
       await tester.pump();

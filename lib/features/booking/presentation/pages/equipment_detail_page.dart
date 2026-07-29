@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../equipment/domain/entities/equipment.dart';
+import '../../../favorites/presentation/cubit/favorites_cubit.dart';
 import '../../domain/entities/booking.dart';
 import '../widgets/rate_option_selector.dart';
 import 'request_to_rent_page.dart';
@@ -18,7 +20,6 @@ class EquipmentDetailPage extends StatefulWidget {
 
 class _EquipmentDetailPageState extends State<EquipmentDetailPage> {
   late String _selectedRateType;
-  bool _isFavorite = false;
 
   @override
   void initState() {
@@ -302,12 +303,18 @@ class _EquipmentDetailPageState extends State<EquipmentDetailPage> {
             right: 12,
             child: Row(
               children: [
-                _circleButton(
-                  icon: _isFavorite ? Icons.favorite : Icons.favorite_border,
-                  iconColor: _isFavorite
-                      ? Colors.redAccent
-                      : AppColors.textPrimary,
-                  onTap: () => setState(() => _isFavorite = !_isFavorite),
+                BlocBuilder<FavoritesCubit, FavoritesState>(
+                  builder: (context, state) {
+                    final isFavorite = state.contains(equipment.id);
+                    return _circleButton(
+                      icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                      iconColor: isFavorite
+                          ? Colors.redAccent
+                          : AppColors.textPrimary,
+                      onTap: () =>
+                          context.read<FavoritesCubit>().toggle(equipment),
+                    );
+                  },
                 ),
                 const SizedBox(width: 10),
                 _circleButton(

@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../core/services/preferences_service.dart';
 import '../../core/theme/app_colors.dart';
-import '../../injection_container.dart';
 import '../auth/presentation/bloc/auth_bloc.dart';
 import '../auth/presentation/pages/profile_page.dart';
 import '../auth/presentation/pages/splash_page.dart';
+import '../bookings/presentation/pages/my_bookings_page.dart';
+import '../favorites/presentation/cubit/favorites_cubit.dart';
+import '../favorites/presentation/pages/favorites_page.dart';
 import '../home/presentation/pages/home_page.dart';
 import '../home/presentation/widgets/custom_bottom_nav.dart';
+import '../wallet/presentation/cubit/wallet_cubit.dart';
+import '../wallet/presentation/pages/wallet_page.dart';
+import 'farmer_navigation_cubit.dart';
 
+/// The farmer workspace.
+///
+/// [RoleHome] routes owner accounts to OwnerShell, so this shell only exposes
+/// farmer tabs. Booking queries always receive the authenticated Firebase UID.
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -18,39 +26,10 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  int _tab = 0;
-  String? _role;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadRole();
-  }
-
-  Future<void> _loadRole() async {
-    final role = await sl<PreferencesService>().getRole();
-    debugPrint('[AgriRent][MainShell] local role read: $role');
-    if (!mounted) return;
-    setState(() => _role = role);
-  }
-
-  List<Widget> _pagesFor(String? role) {
-    final isOwner = role == PreferencesService.roleOwner;
-    return [
-      isOwner ? const _ComingSoon(title: 'Owner Dashboard') : const HomePage(),
-      _ComingSoon(title: isOwner ? 'Rental Requests' : 'My Bookings'),
-      const _ComingSoon(title: 'Wallet'),
-      const _ComingSoon(title: 'Favorites'),
-      const ProfilePage(),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        // Route guard: no signed-in user should ever see a shell tab. If auth
-        // is dropped (sign-out, token expiry, deletion), bounce to Splash.
         if (state is Unauthenticated) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const SplashPage()),
@@ -65,7 +44,7 @@ class _MainShellState extends State<MainShell> {
             current is AuthInitial ||
             current is AuthLoading,
         builder: (context, state) {
-          if (state is! Authenticated || _role == null) {
+          if (state is! Authenticated) {
             return const Scaffold(
               backgroundColor: AppColors.background,
               body: Center(
@@ -74,49 +53,29 @@ class _MainShellState extends State<MainShell> {
             );
           }
 
-          return Scaffold(
-            extendBody: true,
-            backgroundColor: AppColors.background,
-            body: IndexedStack(index: _tab, children: _pagesFor(_role)),
-            bottomNavigationBar: CustomBottomNav(
-              currentIndex: _tab,
-              onTap: (i) => setState(() => _tab = i),
+          context.read<FavoritesCubit>().watch(state.user.id);
+          context.read<WalletCubit>().watch(state.user.id);
+
+          final pages = <Widget>[
+            const HomePage(),
+            MyBookingsPage(farmerId: state.user.id),
+            const WalletPage(),
+            const FavoritesPage(),
+            const ProfilePage(),
+          ];
+
+          return BlocBuilder<FarmerNavigationCubit, int>(
+            builder: (context, tab) => Scaffold(
+              extendBody: true,
+              backgroundColor: AppColors.background,
+              body: IndexedStack(index: tab, children: pages),
+              bottomNavigationBar: CustomBottomNav(
+                currentIndex: tab,
+                onTap: context.read<FarmerNavigationCubit>().select,
+              ),
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _ComingSoon extends StatelessWidget {
-  final String title;
-
-  const _ComingSoon({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        foregroundColor: AppColors.textPrimary,
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-        ),
-        centerTitle: false,
-      ),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 80),
-          child: Text(
-            'Coming soon',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
-          ),
-        ),
       ),
     );
   }

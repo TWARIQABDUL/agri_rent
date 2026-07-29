@@ -14,12 +14,18 @@ abstract class BookingStatus {
   static const cancelled = 'cancelled';
 }
 
+abstract class BookingPaymentStatus {
+  static const paid = 'paid';
+}
+
 class Booking extends Equatable {
   final String id;
   final String equipmentId;
   final String equipmentName;
   final String equipmentCategory;
+  final String equipmentImage;
   final String farmerId;
+  final String farmerName;
   final String ownerId;
   final String ownerName;
   final String rateType;
@@ -31,13 +37,17 @@ class Booking extends Equatable {
   final double total;
   final String status;
   final DateTime createdAt;
+  final String walletTransactionId;
+  final String paymentStatus;
 
   const Booking({
     required this.id,
     required this.equipmentId,
     required this.equipmentName,
     required this.equipmentCategory,
+    required this.equipmentImage,
     required this.farmerId,
+    required this.farmerName,
     required this.ownerId,
     required this.ownerName,
     required this.rateType,
@@ -49,6 +59,8 @@ class Booking extends Equatable {
     required this.total,
     required this.status,
     required this.createdAt,
+    this.walletTransactionId = '',
+    this.paymentStatus = BookingPaymentStatus.paid,
   });
 
   @override
@@ -57,7 +69,9 @@ class Booking extends Equatable {
     equipmentId,
     equipmentName,
     equipmentCategory,
+    equipmentImage,
     farmerId,
+    farmerName,
     ownerId,
     ownerName,
     rateType,
@@ -69,5 +83,7 @@ class Booking extends Equatable {
     total,
     status,
     createdAt,
+    walletTransactionId,
+    paymentStatus,
   ];
 }

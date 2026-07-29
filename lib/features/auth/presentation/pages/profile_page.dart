@@ -12,7 +12,9 @@ import 'settings_page.dart';
 import 'splash_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final ValueChanged<String>? onRoleChanged;
+
+  const ProfilePage({super.key, this.onRoleChanged});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -190,13 +192,13 @@ class _ProfilePageState extends State<ProfilePage> {
     );
     if (chosen == null || chosen == current || !mounted) return;
 
-    await _prefs.setRole(
-      chosen == UserRole.owner
-          ? PreferencesService.roleOwner
-          : PreferencesService.roleFarmer,
-    );
+    final role = chosen == UserRole.owner
+        ? PreferencesService.roleOwner
+        : PreferencesService.roleFarmer;
+    await _prefs.setRole(role);
     if (!mounted) return;
 
+    widget.onRoleChanged?.call(role);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const RoleHome()),
       (route) => false,
@@ -219,8 +221,11 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Row(
             children: [
-              const Icon(Icons.mark_email_unread_outlined,
-                  color: amberDark, size: 20),
+              const Icon(
+                Icons.mark_email_unread_outlined,
+                color: amberDark,
+                size: 20,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(

@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/pages/equipment_detail_page.dart';
 import '../../../equipment/presentation/bloc/equipment_bloc.dart';
+import '../../../favorites/presentation/cubit/favorites_cubit.dart';
 import '../widgets/active_rental_banner.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/equipment_card.dart';
@@ -280,37 +281,47 @@ class _HomePageState extends State<HomePage> {
                         );
                       }
 
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.75,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                            ),
-                        itemCount: state.equipment.length,
-                        itemBuilder: (context, index) {
-                          final equipment = state.equipment[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      EquipmentDetailPage(equipment: equipment),
+                      return BlocBuilder<FavoritesCubit, FavoritesState>(
+                        builder: (context, favorites) {
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.75,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                ),
+                            itemCount: state.equipment.length,
+                            itemBuilder: (context, index) {
+                              final equipment = state.equipment[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => EquipmentDetailPage(
+                                        equipment: equipment,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: EquipmentCard(
+                                  equipmentId: equipment.id,
+                                  name: equipment.name,
+                                  ownerId: equipment.ownerId,
+                                  pricePerDay: equipment.pricePerDay,
+                                  location: equipment.location,
+                                  rating: equipment.rating,
+                                  type: equipment.category,
+                                  image: equipment.image,
+                                  isFavorite: favorites.contains(equipment.id),
+                                  onFavoriteTap: () => context
+                                      .read<FavoritesCubit>()
+                                      .toggle(equipment),
                                 ),
                               );
                             },
-                            child: EquipmentCard(
-                              name: equipment.name,
-                              ownerId: equipment.ownerId,
-                              pricePerDay: equipment.pricePerDay,
-                              location: equipment.location,
-                              rating: equipment.rating,
-                              type: equipment.category,
-                              image: equipment.image,
-                            ),
                           );
                         },
                       );

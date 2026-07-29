@@ -20,6 +20,19 @@ class BookingSuccess extends BookingState {
   List<Object?> get props => [booking];
 }
 
+class BookingInsufficientBalance extends BookingState {
+  final double amountDue;
+  final double availableBalance;
+
+  const BookingInsufficientBalance({
+    required this.amountDue,
+    required this.availableBalance,
+  });
+
+  @override
+  List<Object?> get props => [amountDue, availableBalance];
+}
+
 class BookingFailure extends BookingState {
   final String message;
 

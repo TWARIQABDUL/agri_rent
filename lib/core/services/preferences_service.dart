@@ -25,7 +25,7 @@ class PreferencesService {
   Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
   Future<String?> getRole() async =>
-      (await _prefs).getString(_kRole) ?? roleOwner;
+      (await _prefs).getString(_kRole) ?? roleFarmer;
 
   Future<void> setRole(String role) async {
     await (await _prefs).setString(_kRole, role);
