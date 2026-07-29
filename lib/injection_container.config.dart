@@ -41,6 +41,18 @@ import 'features/equipment/domain/repositories/equipment_repository.dart'
     as _i683;
 import 'features/equipment/domain/usecases/get_equipment.dart' as _i613;
 import 'features/equipment/presentation/bloc/equipment_bloc.dart' as _i825;
+import 'features/owner/data/datasources/owner_remote_data_source.dart' as _i301;
+import 'features/owner/data/repositories/owner_repository_impl.dart' as _i1063;
+import 'features/owner/domain/repositories/owner_repository.dart' as _i676;
+import 'features/owner/domain/usecases/ensure_owner_profile.dart' as _i721;
+import 'features/owner/domain/usecases/get_owner_listings.dart' as _i608;
+import 'features/owner/domain/usecases/get_owner_summary.dart' as _i475;
+import 'features/owner/domain/usecases/publish_listing.dart' as _i158;
+import 'features/owner/domain/usecases/set_listing_paused.dart' as _i582;
+import 'features/owner/domain/usecases/update_listing.dart' as _i454;
+import 'features/owner/presentation/bloc/listing_form_bloc.dart' as _i68;
+import 'features/owner/presentation/bloc/owner_dashboard_bloc.dart' as _i624;
+import 'features/owner/presentation/bloc/owner_listings_bloc.dart' as _i595;
 import 'injection_container.dart' as _i809;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -60,6 +72,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i974.FirebaseFirestore>(() => firebaseModule.firestore);
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
+    gh.lazySingleton<_i301.OwnerRemoteDataSource>(
+      () => _i301.OwnerRemoteDataSourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
     gh.lazySingleton<_i767.AuthRemoteDataSource>(
       () => _i767.AuthRemoteDataSourceImpl(
         gh<_i59.FirebaseAuth>(),
@@ -89,9 +104,35 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i829.BookingRepository>(),
         gh<_i738.CalculateRentalCost>(),
       ),
+    gh.lazySingleton<_i676.OwnerRepository>(
+      () => _i1063.OwnerRepositoryImpl(gh<_i301.OwnerRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i721.EnsureOwnerProfile>(
+      () => _i721.EnsureOwnerProfile(gh<_i676.OwnerRepository>()),
+    );
+    gh.lazySingleton<_i608.GetOwnerListings>(
+      () => _i608.GetOwnerListings(gh<_i676.OwnerRepository>()),
+    );
+    gh.lazySingleton<_i475.GetOwnerSummary>(
+      () => _i475.GetOwnerSummary(gh<_i676.OwnerRepository>()),
+    );
+    gh.lazySingleton<_i158.PublishListing>(
+      () => _i158.PublishListing(gh<_i676.OwnerRepository>()),
+    );
+    gh.lazySingleton<_i582.SetListingPaused>(
+      () => _i582.SetListingPaused(gh<_i676.OwnerRepository>()),
+    );
+    gh.lazySingleton<_i454.UpdateListing>(
+      () => _i454.UpdateListing(gh<_i676.OwnerRepository>()),
     );
     gh.lazySingleton<_i613.GetEquipment>(
       () => _i613.GetEquipment(gh<_i683.EquipmentRepository>()),
+    );
+    gh.factory<_i68.ListingFormBloc>(
+      () => _i68.ListingFormBloc(
+        gh<_i158.PublishListing>(),
+        gh<_i454.UpdateListing>(),
+      ),
     );
     gh.lazySingleton<_i191.GetCurrentUser>(
       () => _i191.GetCurrentUser(gh<_i1015.AuthRepository>()),
@@ -114,6 +155,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i825.EquipmentBloc>(
       () => _i825.EquipmentBloc(gh<_i613.GetEquipment>()),
     );
+    gh.factory<_i624.OwnerDashboardBloc>(
+      () => _i624.OwnerDashboardBloc(
+        gh<_i475.GetOwnerSummary>(),
+        gh<_i721.EnsureOwnerProfile>(),
+      ),
+    );
     gh.factory<_i363.AuthBloc>(
       () => _i363.AuthBloc(
         gh<_i509.SignInWithEmail>(),
@@ -122,6 +169,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i872.SignOut>(),
         gh<_i191.GetCurrentUser>(),
         gh<_i1015.AuthRepository>(),
+      ),
+    );
+    gh.factory<_i595.OwnerListingsBloc>(
+      () => _i595.OwnerListingsBloc(
+        gh<_i608.GetOwnerListings>(),
+        gh<_i582.SetListingPaused>(),
       ),
     );
     return this;

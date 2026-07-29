@@ -19,6 +19,9 @@ class EquipmentModel extends Equipment {
     super.pricePerHour,
     super.pricePerHectare,
     super.specs,
+    super.bookingCount,
+    super.createdAt,
+    super.updatedAt,
   });
 
   factory EquipmentModel.fromFirestore(DocumentSnapshot doc) {
@@ -30,7 +33,7 @@ class EquipmentModel extends Equipment {
       description: data['description'] ?? '',
       pricePerDay: (data['pricePerDay'] as num?)?.toDouble() ?? 0.0,
       pricePerMonth: (data['pricePerMonth'] as num?)?.toDouble() ?? 0.0,
-      status: data['status'] ?? 'available',
+      status: data['status'] ?? EquipmentStatus.available,
       category: data['category'] ?? '',
       image: data['image'] ?? '',
       location: data['location'] ?? '',
@@ -43,6 +46,9 @@ class EquipmentModel extends Equipment {
             (key, value) => MapEntry(key.toString(), value.toString()),
           ) ??
           const {},
+      bookingCount: (data['bookingCount'] as num?)?.toInt() ?? 0,
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -63,6 +69,7 @@ class EquipmentModel extends Equipment {
       'pricePerHour': pricePerHour,
       'pricePerHectare': pricePerHectare,
       'specs': specs,
+      'bookingCount': bookingCount,
     };
   }
 }

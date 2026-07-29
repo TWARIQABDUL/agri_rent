@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/services/preferences_service.dart';
 import '../../../../injection_container.dart';
+import '../../../main_shell/role_home.dart';
 import '../../domain/entities/user.dart';
 import '../bloc/auth_bloc.dart';
 import 'personal_details_page.dart';
+import 'role_selection_page.dart';
 import 'settings_page.dart';
 import 'splash_page.dart';
 
@@ -116,6 +118,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: _openPersonalDetails,
                     ),
                     _menuRow(
+                      icon: Icons.swap_horiz,
+                      label: 'Switch Role',
+                      subtitle: 'Currently browsing as $_roleLabel',
+                      onTap: _switchRole,
+                    ),
+                    _menuRow(
                       icon: Icons.settings_outlined,
                       label: 'Settings',
                       subtitle: 'Notifications, language & security',
@@ -147,6 +155,30 @@ class _ProfilePageState extends State<ProfilePage> {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const PersonalDetailsPage()));
+  }
+
+  /// Rebuilding from [RoleHome] rather than popping, because the two roles run
+  /// different shells with different tabs.
+  Future<void> _switchRole() async {
+    final current = _roleLabel == 'Owner' ? UserRole.owner : UserRole.farmer;
+    final chosen = await Navigator.of(context).push<UserRole>(
+      MaterialPageRoute(
+        builder: (_) => RoleSelectionPage(currentRole: current),
+      ),
+    );
+    if (chosen == null || chosen == current || !mounted) return;
+
+    await _prefs.setRole(
+      chosen == UserRole.owner
+          ? PreferencesService.roleOwner
+          : PreferencesService.roleFarmer,
+    );
+    if (!mounted) return;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const RoleHome()),
+      (route) => false,
+    );
   }
 
   Widget _profileCard(User? user) {
