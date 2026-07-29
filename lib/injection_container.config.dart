@@ -25,6 +25,14 @@ import 'features/auth/domain/usecases/sign_in_with_google.dart' as _i648;
 import 'features/auth/domain/usecases/sign_out.dart' as _i872;
 import 'features/auth/domain/usecases/sign_up_with_email.dart' as _i784;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
+import 'features/booking/data/datasources/booking_remote_data_source.dart'
+    as _i97;
+import 'features/booking/data/repositories/booking_repository_impl.dart'
+    as _i703;
+import 'features/booking/domain/repositories/booking_repository.dart' as _i829;
+import 'features/booking/domain/usecases/calculate_rental_cost.dart' as _i738;
+import 'features/booking/domain/usecases/create_booking.dart' as _i46;
+import 'features/booking/presentation/bloc/booking_bloc.dart' as _i393;
 import 'features/equipment/data/datasources/equipment_remote_data_source.dart'
     as _i415;
 import 'features/equipment/data/repositories/equipment_repository_impl.dart'
@@ -58,6 +66,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i811.PreferencesService>(
       () => _i811.PreferencesService(),
     );
+    gh.lazySingleton<_i738.CalculateRentalCost>(
+      () => const _i738.CalculateRentalCost(),
+    );
     gh.lazySingleton<_i974.FirebaseFirestore>(() => firebaseModule.firestore);
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
@@ -68,7 +79,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i767.AuthRemoteDataSourceImpl(
         gh<_i59.FirebaseAuth>(),
         gh<_i116.GoogleSignIn>(),
+        gh<_i974.FirebaseFirestore>(),
+        gh<_i811.PreferencesService>(),
       ),
+    );
+    gh.lazySingleton<_i97.BookingRemoteDataSource>(
+      () => _i97.BookingRemoteDataSourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
+    gh.lazySingleton<_i829.BookingRepository>(
+      () => _i703.BookingRepositoryImpl(gh<_i97.BookingRemoteDataSource>()),
     );
     gh.lazySingleton<_i415.EquipmentRemoteDataSource>(
       () => _i415.EquipmentRemoteDataSourceImpl(gh<_i974.FirebaseFirestore>()),
@@ -80,6 +99,11 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i822.EquipmentRepositoryImpl(gh<_i415.EquipmentRemoteDataSource>()),
     );
+    gh.lazySingleton<_i46.CreateBooking>(
+      () => _i46.CreateBooking(
+        gh<_i829.BookingRepository>(),
+        gh<_i738.CalculateRentalCost>(),
+      ),
     gh.lazySingleton<_i676.OwnerRepository>(
       () => _i1063.OwnerRepositoryImpl(gh<_i301.OwnerRemoteDataSource>()),
     );
@@ -124,6 +148,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i784.SignUpWithEmail>(
       () => _i784.SignUpWithEmail(gh<_i1015.AuthRepository>()),
+    );
+    gh.factory<_i393.BookingBloc>(
+      () => _i393.BookingBloc(gh<_i46.CreateBooking>()),
     );
     gh.factory<_i825.EquipmentBloc>(
       () => _i825.EquipmentBloc(gh<_i613.GetEquipment>()),

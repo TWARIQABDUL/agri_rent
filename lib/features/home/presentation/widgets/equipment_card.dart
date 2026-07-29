@@ -57,24 +57,40 @@ class EquipmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image Area Placeholder
+          // Image Area
           Expanded(
             child: Stack(
               children: [
-                Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF0F4F8), // Light placeholder background
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
                   ),
-                  child: Center(
-                    child: Icon(
-                      _getIconForType(),
-                      size: 56,
-                      color: AppColors.primaryDark,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF0F4F8), // Placeholder background
                     ),
+                    child: image.isNotEmpty
+                        ? Image.network(
+                            image,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Center(
+                                  child: Icon(
+                                    _getIconForType(),
+                                    size: 56,
+                                    color: AppColors.primaryDark,
+                                  ),
+                                ),
+                          )
+                        : Center(
+                            child: Icon(
+                              _getIconForType(),
+                              size: 56,
+                              color: AppColors.primaryDark,
+                            ),
+                          ),
                   ),
                 ),
                 Positioned(
