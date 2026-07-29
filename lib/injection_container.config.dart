@@ -104,6 +104,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i829.BookingRepository>(),
         gh<_i738.CalculateRentalCost>(),
       ),
+    );
     gh.lazySingleton<_i676.OwnerRepository>(
       () => _i1063.OwnerRepositoryImpl(gh<_i301.OwnerRemoteDataSource>()),
     );
