@@ -42,7 +42,8 @@ class EquipmentModel extends Equipment {
       reviewCount: (data['reviewCount'] as num?)?.toInt() ?? 0,
       pricePerHour: (data['pricePerHour'] as num?)?.toDouble() ?? 0.0,
       pricePerHectare: (data['pricePerHectare'] as num?)?.toDouble() ?? 0.0,
-      specs: (data['specs'] as Map?)?.map(
+      specs:
+          (data['specs'] as Map?)?.map(
             (key, value) => MapEntry(key.toString(), value.toString()),
           ) ??
           const {},
