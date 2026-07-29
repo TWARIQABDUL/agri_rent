@@ -304,7 +304,9 @@ class _EquipmentDetailPageState extends State<EquipmentDetailPage> {
               children: [
                 _circleButton(
                   icon: _isFavorite ? Icons.favorite : Icons.favorite_border,
-                  iconColor: _isFavorite ? Colors.redAccent : AppColors.textPrimary,
+                  iconColor: _isFavorite
+                      ? Colors.redAccent
+                      : AppColors.textPrimary,
                   onTap: () => setState(() => _isFavorite = !_isFavorite),
                 ),
                 const SizedBox(width: 10),
@@ -465,7 +467,10 @@ class _EquipmentDetailPageState extends State<EquipmentDetailPage> {
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 2),
           Text(

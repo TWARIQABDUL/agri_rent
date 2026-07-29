@@ -34,9 +34,7 @@ class _MainShellState extends State<MainShell> {
   List<Widget> _pagesFor(String? role) {
     final isOwner = role == PreferencesService.roleOwner;
     return [
-      isOwner
-          ? const _ComingSoon(title: 'Owner Dashboard')
-          : const HomePage(),
+      isOwner ? const _ComingSoon(title: 'Owner Dashboard') : const HomePage(),
       _ComingSoon(title: isOwner ? 'Rental Requests' : 'My Bookings'),
       const _ComingSoon(title: 'Wallet'),
       const _ComingSoon(title: 'Favorites'),
