@@ -11,11 +11,22 @@ import 'features/equipment/presentation/bloc/equipment_bloc.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 const _googleWebClientId =
     '928210968988-dbnjmve401e9c3gkaju8fkoi5sobf1qf.apps.googleusercontent.com';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  await dotenv.load(fileName: ".env");
+  
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GoogleSignIn.instance.initialize(serverClientId: _googleWebClientId);
   configureDependencies();

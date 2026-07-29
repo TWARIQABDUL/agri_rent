@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/constants/equipment_categories.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -445,78 +447,58 @@ class _AddEquipmentPageState extends State<AddEquipmentPage> {
   }
 
   Future<void> _editPhotoLink(ListingDraft draft) async {
-    final link = await showModalBottomSheet<String>(
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    
+    if (image == null || !mounted) return;
+
+    // Show loading dialog
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
-      ),
-      builder: (sheetContext) => _PhotoLinkSheet(initialUrl: draft.imageUrl),
-    );
-
-    if (link == null || !mounted) return;
-    _change(draft.copyWith(imageUrl: link));
-  }
-}
-
-class _PhotoLinkSheet extends StatefulWidget {
-  final String initialUrl;
-
-  const _PhotoLinkSheet({required this.initialUrl});
-
-  @override
-  State<_PhotoLinkSheet> createState() => _PhotoLinkSheetState();
-}
-
-class _PhotoLinkSheetState extends State<_PhotoLinkSheet> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.initialUrl);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        22,
-        20,
-        22 + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const FieldLabel(
-            'Photo link',
-            hint: 'Uploading from the gallery arrives with storage support',
-          ),
-          const SizedBox(height: 12),
-          OwnerTextField(
-            controller: _controller,
-            hintText: 'https://...',
-            keyboardType: TextInputType.url,
-            textCapitalization: TextCapitalization.none,
-            onChanged: (_) {},
-          ),
-          const SizedBox(height: 16),
-          OwnerPrimaryButton(
-            label: 'Use this photo',
-            onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
-          ),
-        ],
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primaryDark),
       ),
     );
+
+    try {
+      final bytes = await image.readAsBytes();
+      final fileExtension = image.name.split('.').last.toLowerCase();
+      // Put the file inside an "equipment" folder to see if RLS policies require a folder structure
+      final fileName = 'equipment/${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+      
+      String mimeType = 'image/jpeg';
+      if (fileExtension == 'png') mimeType = 'image/png';
+      else if (fileExtension == 'gif') mimeType = 'image/gif';
+      else if (fileExtension == 'webp') mimeType = 'image/webp';
+
+      await Supabase.instance.client.storage
+          .from('documents')
+          .uploadBinary(
+            fileName, 
+            bytes,
+            fileOptions: FileOptions(contentType: mimeType),
+          );
+          
+      final publicUrl = Supabase.instance.client.storage
+          .from('documents')
+          .getPublicUrl(fileName);
+
+      if (mounted) {
+        Navigator.of(context).pop(); // Dismiss loading
+        _change(draft.copyWith(imageUrl: publicUrl));
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop(); // Dismiss loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to upload image: $e'),
+            backgroundColor: AppColors.danger,
+          ),
+        );
+      }
+    }
   }
 }
 
