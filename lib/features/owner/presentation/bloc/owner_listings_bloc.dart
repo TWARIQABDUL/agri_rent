@@ -29,7 +29,17 @@ class OwnerListingsBloc extends Bloc<OwnerListingsEvent, OwnerListingsState> {
       final listings = await getOwnerListings(event.ownerId);
       emit(OwnerListingsLoaded(listings));
     } catch (error) {
-      emit(OwnerListingsError(error.toString()));
+      if (event.silent && state is OwnerListingsLoaded) {
+        // Retain the shelf so a transient failure does not blank the page.
+        emit(
+          OwnerListingsLoaded(
+            (state as OwnerListingsLoaded).listings,
+            failureMessage: error.toString(),
+          ),
+        );
+      } else {
+        emit(OwnerListingsError(error.toString()));
+      }
     }
   }
 

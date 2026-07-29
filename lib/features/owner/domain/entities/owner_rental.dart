@@ -37,6 +37,10 @@ class OwnerRental extends Equatable {
   /// True once the money has been paid out to the owner's bank.
   final bool paidOut;
 
+  /// Last write to the rental document, treated as the movement timestamp for
+  /// activity sorting. Firestore enforces it on every status change.
+  final DateTime updatedAt;
+
   const OwnerRental({
     required this.id,
     required this.equipmentId,
@@ -46,6 +50,7 @@ class OwnerRental extends Equatable {
     required this.endDate,
     required this.amount,
     required this.status,
+    required this.updatedAt,
     this.paidOut = false,
   });
 
@@ -70,5 +75,6 @@ class OwnerRental extends Equatable {
     amount,
     status,
     paidOut,
+    updatedAt,
   ];
 }

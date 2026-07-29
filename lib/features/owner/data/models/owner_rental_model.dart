@@ -12,6 +12,7 @@ class OwnerRentalModel extends OwnerRental {
     required super.endDate,
     required super.amount,
     required super.status,
+    required super.updatedAt,
     super.paidOut,
   });
 
@@ -19,6 +20,7 @@ class OwnerRentalModel extends OwnerRental {
     final data = doc.data() as Map<String, dynamic>;
     final start = (data['startDate'] as Timestamp?)?.toDate();
     final end = (data['endDate'] as Timestamp?)?.toDate();
+    final updated = (data['updatedAt'] as Timestamp?)?.toDate();
     return OwnerRentalModel(
       id: doc.id,
       equipmentId: data['equipmentId'] ?? '',
@@ -29,6 +31,7 @@ class OwnerRentalModel extends OwnerRental {
       amount: (data['totalAmount'] as num?)?.toDouble() ?? 0.0,
       status: data['status'] ?? RentalStatus.pending,
       paidOut: data['paidOut'] ?? false,
+      updatedAt: updated ?? DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 }

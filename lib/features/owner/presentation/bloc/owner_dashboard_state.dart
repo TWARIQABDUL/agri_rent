@@ -14,10 +14,14 @@ class OwnerDashboardLoading extends OwnerDashboardState {}
 class OwnerDashboardLoaded extends OwnerDashboardState {
   final OwnerSummary summary;
 
-  const OwnerDashboardLoaded(this.summary);
+  /// Set when a silent refresh failed while the previous summary is still on
+  /// screen.  The UI shows it as a snackbar rather than a blocking error.
+  final String? failureMessage;
+
+  const OwnerDashboardLoaded(this.summary, {this.failureMessage});
 
   @override
-  List<Object?> get props => [summary];
+  List<Object?> get props => [summary, failureMessage];
 }
 
 class OwnerDashboardError extends OwnerDashboardState {

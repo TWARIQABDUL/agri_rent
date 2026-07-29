@@ -69,7 +69,7 @@ class OwnerSummary extends Equatable {
       ..sort((a, b) => a.endDate.compareTo(b.endDate));
 
     final activity = rentals.where((r) => r.isCompleted || r.isActive).toList()
-      ..sort((a, b) => b.endDate.compareTo(a.endDate));
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
     return OwnerSummary(
       earnings: EarningsBreakdown(

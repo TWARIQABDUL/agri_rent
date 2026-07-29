@@ -26,8 +26,6 @@ class OwnerDashboardBloc
   ) async {
     if (!event.silent) emit(OwnerDashboardLoading());
     try {
-      // The profile document is what the security rules read before allowing a
-      // listing write, so it is created here rather than at publish time.
       await ensureOwnerProfile(
         EnsureOwnerProfileParams(
           ownerId: event.ownerId,
@@ -37,7 +35,18 @@ class OwnerDashboardBloc
       );
       emit(OwnerDashboardLoaded(await getOwnerSummary(event.ownerId)));
     } catch (error) {
-      emit(OwnerDashboardError(error.toString()));
+      if (event.silent && state is OwnerDashboardLoaded) {
+        // Retain the loaded content so a transient failure does not blank the
+        // dashboard.  The page surfaces the message in a snackbar.
+        emit(
+          OwnerDashboardLoaded(
+            (state as OwnerDashboardLoaded).summary,
+            failureMessage: error.toString(),
+          ),
+        );
+      } else {
+        emit(OwnerDashboardError(error.toString()));
+      }
     }
   }
 }

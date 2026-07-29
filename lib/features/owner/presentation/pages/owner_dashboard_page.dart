@@ -63,7 +63,17 @@ class OwnerDashboardPage extends StatelessWidget {
           child: Divider(height: 1, color: AppColors.outline),
         ),
       ),
-      body: BlocBuilder<OwnerDashboardBloc, OwnerDashboardState>(
+      body: BlocConsumer<OwnerDashboardBloc, OwnerDashboardState>(
+        listener: (context, state) {
+          if (state is OwnerDashboardLoaded && state.failureMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.failureMessage!),
+                backgroundColor: AppColors.danger,
+              ),
+            );
+          }
+        },
         builder: (context, state) {
           if (state is OwnerDashboardLoading ||
               state is OwnerDashboardInitial) {
@@ -212,12 +222,20 @@ class OwnerDashboardPage extends StatelessWidget {
     _reload(context);
   }
 
-  void _reload(BuildContext context) {
-    context.read<OwnerDashboardBloc>().add(
-      LoadOwnerDashboard(ownerId: ownerId, silent: true),
-    );
-    context.read<OwnerListingsBloc>().add(
-      LoadOwnerListings(ownerId, silent: true),
-    );
+  Future<void> _reload(BuildContext context) async {
+    final dashboardBloc = context.read<OwnerDashboardBloc>();
+    final listingsBloc = context.read<OwnerListingsBloc>();
+
+    dashboardBloc.add(LoadOwnerDashboard(ownerId: ownerId, silent: true));
+    listingsBloc.add(LoadOwnerListings(ownerId, silent: true));
+
+    await Future.wait([
+      dashboardBloc.stream.firstWhere(
+        (s) => s is OwnerDashboardLoaded || s is OwnerDashboardError,
+      ),
+      listingsBloc.stream.firstWhere(
+        (s) => s is OwnerListingsLoaded || s is OwnerListingsError,
+      ),
+    ]);
   }
 }

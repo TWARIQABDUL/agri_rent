@@ -183,9 +183,11 @@ class EarningsPage extends StatelessWidget {
     );
   }
 
-  void _reload(BuildContext context) {
-    context.read<OwnerDashboardBloc>().add(
-      LoadOwnerDashboard(ownerId: ownerId, silent: true),
+  Future<void> _reload(BuildContext context) async {
+    final dashboardBloc = context.read<OwnerDashboardBloc>();
+    dashboardBloc.add(LoadOwnerDashboard(ownerId: ownerId, silent: true));
+    await dashboardBloc.stream.firstWhere(
+      (s) => s is OwnerDashboardLoaded || s is OwnerDashboardError,
     );
   }
 }

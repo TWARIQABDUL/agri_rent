@@ -152,12 +152,20 @@ class MyListingsPage extends StatelessWidget {
   }
 
   /// A listing write moves both the shelf and the dashboard counters.
-  void _reload(BuildContext context) {
-    context.read<OwnerListingsBloc>().add(
-      LoadOwnerListings(ownerId, silent: true),
-    );
-    context.read<OwnerDashboardBloc>().add(
-      LoadOwnerDashboard(ownerId: ownerId, silent: true),
-    );
+  Future<void> _reload(BuildContext context) async {
+    final listingsBloc = context.read<OwnerListingsBloc>();
+    final dashboardBloc = context.read<OwnerDashboardBloc>();
+
+    listingsBloc.add(LoadOwnerListings(ownerId, silent: true));
+    dashboardBloc.add(LoadOwnerDashboard(ownerId: ownerId, silent: true));
+
+    await Future.wait([
+      listingsBloc.stream.firstWhere(
+        (s) => s is OwnerListingsLoaded || s is OwnerListingsError,
+      ),
+      dashboardBloc.stream.firstWhere(
+        (s) => s is OwnerDashboardLoaded || s is OwnerDashboardError,
+      ),
+    ]);
   }
 }

@@ -60,7 +60,7 @@ class ActivityRow extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Text(
-            '+ ${Money.amount(rental.amount)}',
+            '+ ${Money.format(rental.amount)}',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w800,
