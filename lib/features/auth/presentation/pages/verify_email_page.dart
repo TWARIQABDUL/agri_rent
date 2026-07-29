@@ -49,7 +49,9 @@ class VerifyEmailPage extends StatelessWidget {
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                     const SnackBar(
-                      content: Text('Verification email sent. Check your inbox.'),
+                      content: Text(
+                        'Verification email sent. Check your inbox.',
+                      ),
                       backgroundColor: _green,
                     ),
                   );
@@ -206,11 +208,7 @@ class VerifyEmailPage extends StatelessWidget {
             child: Text(
               "Can't find it? Check spam or promotions. Links expire in "
               '1 hour — use Resend to get a new one.',
-              style: TextStyle(
-                fontSize: 12.5,
-                color: _amberDark,
-                height: 1.4,
-              ),
+              style: TextStyle(fontSize: 12.5, color: _amberDark, height: 1.4),
             ),
           ),
         ],

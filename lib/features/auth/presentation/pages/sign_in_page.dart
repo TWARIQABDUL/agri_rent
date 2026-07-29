@@ -378,9 +378,8 @@ class _SignInPageState extends State<SignInPage> {
       child: GestureDetector(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => ForgotPasswordPage(
-              initialEmail: _emailController.text.trim(),
-            ),
+            builder: (_) =>
+                ForgotPasswordPage(initialEmail: _emailController.text.trim()),
           ),
         ),
         child: const Padding(

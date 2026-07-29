@@ -392,7 +392,12 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _roleChip(UserRole role, IconData icon, String title, String subtitle) {
+  Widget _roleChip(
+    UserRole role,
+    IconData icon,
+    String title,
+    String subtitle,
+  ) {
     final selected = _role == role;
     return Expanded(
       child: GestureDetector(
@@ -420,11 +425,7 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: selected ? _green : _muted,
-              ),
+              Icon(icon, size: 20, color: selected ? _green : _muted),
               const SizedBox(width: 8),
               Column(
                 mainAxisSize: MainAxisSize.min,

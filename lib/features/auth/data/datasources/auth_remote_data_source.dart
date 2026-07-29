@@ -85,8 +85,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
     } on FirebaseException catch (e) {
       if (e.code == 'not-found') {
-        final fallbackRole = await preferencesService.getRole()
-            ?? PreferencesService.roleFarmer;
+        final fallbackRole =
+            await preferencesService.getRole() ?? PreferencesService.roleFarmer;
         await docRef.set({
           'email': user.email ?? '',
           'displayName': user.displayName ?? '',

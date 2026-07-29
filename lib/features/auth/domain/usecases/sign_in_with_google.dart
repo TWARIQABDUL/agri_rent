@@ -4,7 +4,8 @@ import '../entities/google_auth_result.dart';
 import '../repositories/auth_repository.dart';
 
 @lazySingleton
-class SignInWithGoogle implements UseCase<GoogleAuthResult, SignInWithGoogleParams> {
+class SignInWithGoogle
+    implements UseCase<GoogleAuthResult, SignInWithGoogleParams> {
   final AuthRepository repository;
 
   SignInWithGoogle(this.repository);

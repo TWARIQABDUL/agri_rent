@@ -66,10 +66,7 @@ class SplashPage extends StatelessWidget {
           constraints: BoxConstraints(minHeight: constraints.maxHeight),
           child: IntrinsicHeight(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 28,
-                vertical: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

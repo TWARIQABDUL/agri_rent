@@ -124,7 +124,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Center(
                           child: TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            style: TextButton.styleFrom(foregroundColor: _muted),
+                            style: TextButton.styleFrom(
+                              foregroundColor: _muted,
+                            ),
                             child: const Text(
                               'Back to Sign In',
                               style: TextStyle(
@@ -196,11 +198,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         width: 118,
         height: 118,
         decoration: const BoxDecoration(color: _tint, shape: BoxShape.circle),
-        child: const Icon(
-          Icons.lock_reset_outlined,
-          size: 58,
-          color: _green,
-        ),
+        child: const Icon(Icons.lock_reset_outlined, size: 58, color: _green),
       ),
     );
   }

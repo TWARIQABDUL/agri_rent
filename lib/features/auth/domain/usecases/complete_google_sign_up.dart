@@ -4,7 +4,8 @@ import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
 
 @lazySingleton
-class CompleteGoogleSignUp implements UseCase<User, CompleteGoogleSignUpParams> {
+class CompleteGoogleSignUp
+    implements UseCase<User, CompleteGoogleSignUpParams> {
   final AuthRepository repository;
 
   CompleteGoogleSignUp(this.repository);
