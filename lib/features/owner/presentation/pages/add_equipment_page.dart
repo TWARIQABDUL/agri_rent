@@ -445,7 +445,6 @@ class _AddEquipmentPageState extends State<AddEquipmentPage> {
   }
 
   Future<void> _editPhotoLink(ListingDraft draft) async {
-    final controller = TextEditingController(text: draft.imageUrl);
     final link = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -453,43 +452,71 @@ class _AddEquipmentPageState extends State<AddEquipmentPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
-      builder: (sheetContext) => Padding(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          22,
-          20,
-          22 + MediaQuery.of(sheetContext).viewInsets.bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const FieldLabel(
-              'Photo link',
-              hint: 'Uploading from the gallery arrives with storage support',
-            ),
-            const SizedBox(height: 12),
-            OwnerTextField(
-              controller: controller,
-              hintText: 'https://...',
-              keyboardType: TextInputType.url,
-              textCapitalization: TextCapitalization.none,
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 16),
-            OwnerPrimaryButton(
-              label: 'Use this photo',
-              onPressed: () =>
-                  Navigator.of(sheetContext).pop(controller.text.trim()),
-            ),
-          ],
-        ),
-      ),
+      builder: (sheetContext) => _PhotoLinkSheet(initialUrl: draft.imageUrl),
     );
 
-    controller.dispose();
     if (link == null || !mounted) return;
     _change(draft.copyWith(imageUrl: link));
+  }
+}
+
+class _PhotoLinkSheet extends StatefulWidget {
+  final String initialUrl;
+
+  const _PhotoLinkSheet({required this.initialUrl});
+
+  @override
+  State<_PhotoLinkSheet> createState() => _PhotoLinkSheetState();
+}
+
+class _PhotoLinkSheetState extends State<_PhotoLinkSheet> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialUrl);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        22,
+        20,
+        22 + MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const FieldLabel(
+            'Photo link',
+            hint: 'Uploading from the gallery arrives with storage support',
+          ),
+          const SizedBox(height: 12),
+          OwnerTextField(
+            controller: _controller,
+            hintText: 'https://...',
+            keyboardType: TextInputType.url,
+            textCapitalization: TextCapitalization.none,
+            onChanged: (_) {},
+          ),
+          const SizedBox(height: 16),
+          OwnerPrimaryButton(
+            label: 'Use this photo',
+            onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
+          ),
+        ],
+      ),
+    );
   }
 }
 
