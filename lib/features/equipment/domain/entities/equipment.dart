@@ -1,5 +1,16 @@
 import 'package:equatable/equatable.dart';
 
+/// Lifecycle of a listing as stored in the `status` field.
+///
+/// A paused listing stays on the owner's shelf but is hidden from browse, so
+/// bookings stop without the owner losing the record.
+class EquipmentStatus {
+  const EquipmentStatus._();
+
+  static const String available = 'available';
+  static const String paused = 'paused';
+}
+
 class Equipment extends Equatable {
   final String id;
   final String name;
@@ -13,6 +24,11 @@ class Equipment extends Equatable {
   final String location;
   final double rating;
 
+  /// Completed rentals for this listing. Derived server-side, read-only here.
+  final int bookingCount;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
   const Equipment({
     required this.id,
     required this.name,
@@ -25,7 +41,12 @@ class Equipment extends Equatable {
     required this.image,
     required this.location,
     required this.rating,
+    this.bookingCount = 0,
+    this.createdAt,
+    this.updatedAt,
   });
+
+  bool get isPaused => status == EquipmentStatus.paused;
 
   @override
   List<Object?> get props => [
@@ -40,5 +61,8 @@ class Equipment extends Equatable {
     image,
     location,
     rating,
+    bookingCount,
+    createdAt,
+    updatedAt,
   ];
 }

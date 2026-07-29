@@ -4,8 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/services/preferences_service.dart';
 import '../../../../injection_container.dart';
-import '../../../main_shell/main_shell.dart';
+import '../../../main_shell/role_home.dart';
 import '../bloc/auth_bloc.dart';
+import 'role_selection_page.dart';
 import 'sign_in_page.dart';
 import 'sign_up_page.dart';
 
@@ -24,7 +25,7 @@ class SplashPage extends StatelessWidget {
         listener: (context, state) {
           if (state is Authenticated) {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const MainShell()),
+              MaterialPageRoute(builder: (_) => const RoleHome()),
             );
           }
         },
@@ -166,9 +167,21 @@ class SplashPage extends StatelessWidget {
     );
   }
 
+  /// The role picked here decides which workspace the app opens after sign-up,
+  /// so it is asked before the account is created rather than assumed.
   Future<void> _startOnboarding(BuildContext context) async {
-    await sl<PreferencesService>().setRole(PreferencesService.roleOwner);
+    final role = await Navigator.of(context).push<UserRole>(
+      MaterialPageRoute(builder: (_) => const RoleSelectionPage()),
+    );
+    if (role == null || !context.mounted) return;
+
+    await sl<PreferencesService>().setRole(
+      role == UserRole.owner
+          ? PreferencesService.roleOwner
+          : PreferencesService.roleFarmer,
+    );
     if (!context.mounted) return;
+
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const SignUpPage()));

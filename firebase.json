@@ -1,1 +1,28 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"agri-rent-66546","appId":"1:928210968988:android:6f950d0fcbc8a0985f6859","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"agri-rent-66546","configurations":{"android":"1:928210968988:android:6f950d0fcbc8a0985f6859","ios":"1:928210968988:ios:3c24625400bb5c985f6859","macos":"1:928210968988:ios:3c24625400bb5c985f6859","web":"1:928210968988:web:3d5e3d041d3b32d35f6859","windows":"1:928210968988:web:5d697a8d62ff8fa15f6859"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "agri-rent-66546",
+          "appId": "1:928210968988:android:6f950d0fcbc8a0985f6859",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "agri-rent-66546",
+          "configurations": {
+            "android": "1:928210968988:android:6f950d0fcbc8a0985f6859",
+            "ios": "1:928210968988:ios:3c24625400bb5c985f6859",
+            "macos": "1:928210968988:ios:3c24625400bb5c985f6859",
+            "web": "1:928210968988:web:3d5e3d041d3b32d35f6859",
+            "windows": "1:928210968988:web:5d697a8d62ff8fa15f6859"
+          }
+        }
+      }
+    }
+  }
+}
