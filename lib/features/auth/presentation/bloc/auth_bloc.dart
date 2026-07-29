@@ -9,7 +9,11 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/complete_google_sign_up.dart';
 import '../../domain/usecases/get_current_user.dart';
+import '../../domain/usecases/reload_current_user.dart';
+import '../../domain/usecases/send_email_verification.dart';
+import '../../domain/usecases/send_password_reset.dart';
 import '../../domain/usecases/sign_in_with_email.dart';
 import '../../domain/usecases/sign_in_with_google.dart';
 import '../../domain/usecases/sign_out.dart';
@@ -25,6 +29,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithGoogle signInWithGoogle;
   final SignOut signOut;
   final GetCurrentUser getCurrentUser;
+  final SendPasswordReset sendPasswordReset;
+  final SendEmailVerification sendEmailVerification;
+  final ReloadCurrentUser reloadCurrentUser;
+  final CompleteGoogleSignUp completeGoogleSignUp;
   final AuthRepository authRepository;
 
   StreamSubscription<User?>? _authSubscription;
@@ -35,13 +43,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this.signInWithGoogle,
     this.signOut,
     this.getCurrentUser,
+    this.sendPasswordReset,
+    this.sendEmailVerification,
+    this.reloadCurrentUser,
+    this.completeGoogleSignUp,
     this.authRepository,
   ) : super(AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<SignInWithEmailRequested>(_onSignInWithEmail);
     on<SignUpWithEmailRequested>(_onSignUpWithEmail);
     on<SignInWithGoogleRequested>(_onSignInWithGoogle);
+    on<CompleteGoogleSignUpRequested>(_onCompleteGoogleSignUp);
     on<SignOutRequested>(_onSignOut);
+    on<PasswordResetRequested>(_onPasswordResetRequested);
+    on<EmailVerificationResendRequested>(_onEmailVerificationResend);
+    on<RefreshVerificationStatusRequested>(_onRefreshVerification);
     on<AuthStateChanged>(_onAuthStateChanged);
 
     _authSubscription = authRepository.authStateChanges().listen(
@@ -102,7 +118,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      final user = await signInWithGoogle(NoParams());
+      final result = await signInWithGoogle(
+        SignInWithGoogleParams(presetRole: event.presetRole),
+      );
+      if (result.isNewUser && !result.profilePersisted) {
+        // New Google account, no role provided upfront — UI must prompt.
+        emit(NeedsRoleForGoogleSignUp(result.user));
+      } else {
+        emit(Authenticated(result.user));
+      }
+    } catch (e) {
+      emit(AuthError(_friendlyError(e)));
+    }
+  }
+
+  Future<void> _onCompleteGoogleSignUp(
+    CompleteGoogleSignUpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final user = await completeGoogleSignUp(
+        CompleteGoogleSignUpParams(role: event.role),
+      );
       emit(Authenticated(user));
     } catch (e) {
       emit(AuthError(_friendlyError(e)));
@@ -121,7 +159,53 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  Future<void> _onPasswordResetRequested(
+    PasswordResetRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      await sendPasswordReset(SendPasswordResetParams(email: event.email));
+      emit(PasswordResetEmailSent(event.email));
+    } catch (e) {
+      emit(AuthError(_friendlyError(e)));
+    }
+  }
+
+  Future<void> _onEmailVerificationResend(
+    EmailVerificationResendRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      await sendEmailVerification(NoParams());
+      emit(const VerificationEmailSent());
+      // Return to the current signed-in state so downstream listeners keep
+      // showing the profile screen instead of a one-shot success page.
+      final user = await getCurrentUser(NoParams());
+      if (user != null) emit(Authenticated(user));
+    } catch (e) {
+      emit(AuthError(_friendlyError(e)));
+    }
+  }
+
+  Future<void> _onRefreshVerification(
+    RefreshVerificationStatusRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      final refreshed = await reloadCurrentUser(NoParams());
+      if (refreshed != null) emit(Authenticated(refreshed));
+    } catch (e) {
+      emit(AuthError(_friendlyError(e)));
+    }
+  }
+
   void _onAuthStateChanged(AuthStateChanged event, Emitter<AuthState> emit) {
+    // Firebase's auth stream fires as soon as Google credential exchange
+    // completes — before the UI has collected the role for a brand-new user.
+    // If we're in that limbo state, don't clobber it with Authenticated or
+    // the role prompt vanishes.
+    if (state is NeedsRoleForGoogleSignUp && event.user != null) return;
     if (event.user != null) {
       emit(Authenticated(event.user!));
     } else {

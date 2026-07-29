@@ -96,6 +96,24 @@ class _ProfilePageState extends State<ProfilePage> {
               MaterialPageRoute(builder: (_) => const SplashPage()),
               (route) => false,
             );
+          } else if (state is VerificationEmailSent) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                const SnackBar(
+                  content: Text('Verification email sent. Check your inbox.'),
+                  backgroundColor: _green,
+                ),
+              );
+          } else if (state is AuthError) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red.shade600,
+                ),
+              );
           }
         },
         child: BlocBuilder<AuthBloc, AuthState>(
@@ -107,6 +125,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _profileCard(user),
+                  if (user != null && !user.emailVerified) ...[
+                    const SizedBox(height: 14),
+                    _verifyEmailBanner(context),
+                  ],
                   const SizedBox(height: 18),
                   _statsRow(),
                   const SizedBox(height: 24),
@@ -178,6 +200,88 @@ class _ProfilePageState extends State<ProfilePage> {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const RoleHome()),
       (route) => false,
+    );
+  }
+
+  Widget _verifyEmailBanner(BuildContext context) {
+    const amberBg = Color(0xFFFFF4D6);
+    const amberBorder = Color(0xFFF5C24C);
+    const amberDark = Color(0xFF8A6300);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: BoxDecoration(
+        color: amberBg,
+        border: Border.all(color: amberBorder, width: 1.2),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.mark_email_unread_outlined,
+                  color: amberDark, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Verify your email',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: amberDark,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'We sent a link to your inbox. Verify to unlock all AgriRent '
+            'features and secure your account.',
+            style: TextStyle(fontSize: 12.5, color: amberDark, height: 1.4),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              TextButton.icon(
+                onPressed: () => context.read<AuthBloc>().add(
+                  const EmailVerificationResendRequested(),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: amberDark,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                ),
+                icon: const Icon(Icons.send_outlined, size: 16),
+                label: const Text(
+                  'Resend',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+              ),
+              const SizedBox(width: 4),
+              TextButton.icon(
+                onPressed: () => context.read<AuthBloc>().add(
+                  const RefreshVerificationStatusRequested(),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: amberDark,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                ),
+                icon: const Icon(Icons.refresh, size: 16),
+                label: const Text(
+                  "I've verified",
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

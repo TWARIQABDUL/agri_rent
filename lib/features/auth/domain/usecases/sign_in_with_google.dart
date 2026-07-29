@@ -1,16 +1,22 @@
 import 'package:injectable/injectable.dart';
 import '../../../../core/usecases/usecase.dart';
-import '../entities/user.dart';
+import '../entities/google_auth_result.dart';
 import '../repositories/auth_repository.dart';
 
 @lazySingleton
-class SignInWithGoogle implements UseCase<User, NoParams> {
+class SignInWithGoogle implements UseCase<GoogleAuthResult, SignInWithGoogleParams> {
   final AuthRepository repository;
 
   SignInWithGoogle(this.repository);
 
   @override
-  Future<User> call(NoParams params) async {
-    return await repository.signInWithGoogle();
+  Future<GoogleAuthResult> call(SignInWithGoogleParams params) {
+    return repository.signInWithGoogle(presetRole: params.presetRole);
   }
+}
+
+class SignInWithGoogleParams {
+  final String? presetRole;
+
+  const SignInWithGoogleParams({this.presetRole});
 }

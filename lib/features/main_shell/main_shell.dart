@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/services/preferences_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../injection_container.dart';
+import '../auth/presentation/bloc/auth_bloc.dart';
 import '../auth/presentation/pages/profile_page.dart';
+import '../auth/presentation/pages/splash_page.dart';
 import '../home/presentation/pages/home_page.dart';
 import '../home/presentation/widgets/custom_bottom_nav.dart';
 
@@ -44,22 +47,43 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    if (_role == null) {
-      return const Scaffold(
-        backgroundColor: AppColors.background,
-        body: Center(
-          child: CircularProgressIndicator(color: AppColors.primaryDark),
-        ),
-      );
-    }
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        // Route guard: no signed-in user should ever see a shell tab. If auth
+        // is dropped (sign-out, token expiry, deletion), bounce to Splash.
+        if (state is Unauthenticated) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const SplashPage()),
+            (route) => false,
+          );
+        }
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(
+        buildWhen: (previous, current) =>
+            current is Authenticated ||
+            current is Unauthenticated ||
+            current is AuthInitial ||
+            current is AuthLoading,
+        builder: (context, state) {
+          if (state is! Authenticated || _role == null) {
+            return const Scaffold(
+              backgroundColor: AppColors.background,
+              body: Center(
+                child: CircularProgressIndicator(color: AppColors.primaryDark),
+              ),
+            );
+          }
 
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: AppColors.background,
-      body: IndexedStack(index: _tab, children: _pagesFor(_role)),
-      bottomNavigationBar: CustomBottomNav(
-        currentIndex: _tab,
-        onTap: (i) => setState(() => _tab = i),
+          return Scaffold(
+            extendBody: true,
+            backgroundColor: AppColors.background,
+            body: IndexedStack(index: _tab, children: _pagesFor(_role)),
+            bottomNavigationBar: CustomBottomNav(
+              currentIndex: _tab,
+              onTap: (i) => setState(() => _tab = i),
+            ),
+          );
+        },
       ),
     );
   }

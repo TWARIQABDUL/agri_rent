@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import '../../domain/entities/google_auth_result.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
@@ -34,8 +35,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User> signInWithGoogle() {
-    return remoteDataSource.signInWithGoogle();
+  Future<GoogleAuthResult> signInWithGoogle({String? presetRole}) {
+    return remoteDataSource.signInWithGoogle(presetRole: presetRole);
+  }
+
+  @override
+  Future<User> completeGoogleSignUp(String role) {
+    return remoteDataSource.completeGoogleSignUp(role);
   }
 
   @override
@@ -51,5 +57,20 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Stream<User?> authStateChanges() {
     return remoteDataSource.authStateChanges();
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) {
+    return remoteDataSource.sendPasswordResetEmail(email);
+  }
+
+  @override
+  Future<void> sendEmailVerification() {
+    return remoteDataSource.sendEmailVerification();
+  }
+
+  @override
+  Future<User?> reloadCurrentUser() {
+    return remoteDataSource.reloadCurrentUser();
   }
 }

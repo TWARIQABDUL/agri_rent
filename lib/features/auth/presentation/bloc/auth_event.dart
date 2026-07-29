@@ -34,9 +34,42 @@ class SignUpWithEmailRequested extends AuthEvent {
   List<Object?> get props => [email, password, displayName];
 }
 
-class SignInWithGoogleRequested extends AuthEvent {}
+class SignInWithGoogleRequested extends AuthEvent {
+  final String? presetRole;
+
+  const SignInWithGoogleRequested({this.presetRole});
+
+  @override
+  List<Object?> get props => [presetRole];
+}
+
+class CompleteGoogleSignUpRequested extends AuthEvent {
+  final String role;
+
+  const CompleteGoogleSignUpRequested(this.role);
+
+  @override
+  List<Object?> get props => [role];
+}
 
 class SignOutRequested extends AuthEvent {}
+
+class PasswordResetRequested extends AuthEvent {
+  final String email;
+
+  const PasswordResetRequested(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class EmailVerificationResendRequested extends AuthEvent {
+  const EmailVerificationResendRequested();
+}
+
+class RefreshVerificationStatusRequested extends AuthEvent {
+  const RefreshVerificationStatusRequested();
+}
 
 class AuthStateChanged extends AuthEvent {
   final User? user;
