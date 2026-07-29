@@ -6,6 +6,7 @@ import '../../../../injection_container.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/pages/profile_page.dart';
+import '../../../auth/presentation/pages/splash_page.dart';
 import '../bloc/owner_dashboard_bloc.dart';
 import '../bloc/owner_listings_bloc.dart';
 import '../widgets/owner_bottom_nav.dart';
@@ -21,7 +22,17 @@ class OwnerShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        // Route guard: sign-out (or token loss) shouldn't leave an owner
+        // sitting on the earnings screen looking at a stale spinner.
+        if (state is Unauthenticated) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const SplashPage()),
+            (route) => false,
+          );
+        }
+      },
       builder: (context, state) {
         if (state is! Authenticated) {
           return const Scaffold(

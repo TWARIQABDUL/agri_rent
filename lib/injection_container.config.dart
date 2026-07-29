@@ -20,6 +20,10 @@ import 'features/auth/data/datasources/auth_remote_data_source.dart' as _i767;
 import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
 import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
 import 'features/auth/domain/usecases/get_current_user.dart' as _i191;
+import 'features/auth/domain/usecases/complete_google_sign_up.dart' as _i913;
+import 'features/auth/domain/usecases/reload_current_user.dart' as _i911;
+import 'features/auth/domain/usecases/send_email_verification.dart' as _i912;
+import 'features/auth/domain/usecases/send_password_reset.dart' as _i910;
 import 'features/auth/domain/usecases/sign_in_with_email.dart' as _i509;
 import 'features/auth/domain/usecases/sign_in_with_google.dart' as _i648;
 import 'features/auth/domain/usecases/sign_out.dart' as _i872;
@@ -150,6 +154,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i784.SignUpWithEmail>(
       () => _i784.SignUpWithEmail(gh<_i1015.AuthRepository>()),
     );
+    gh.lazySingleton<_i910.SendPasswordReset>(
+      () => _i910.SendPasswordReset(gh<_i1015.AuthRepository>()),
+    );
+    gh.lazySingleton<_i912.SendEmailVerification>(
+      () => _i912.SendEmailVerification(gh<_i1015.AuthRepository>()),
+    );
+    gh.lazySingleton<_i911.ReloadCurrentUser>(
+      () => _i911.ReloadCurrentUser(gh<_i1015.AuthRepository>()),
+    );
+    gh.lazySingleton<_i913.CompleteGoogleSignUp>(
+      () => _i913.CompleteGoogleSignUp(gh<_i1015.AuthRepository>()),
+    );
     gh.factory<_i393.BookingBloc>(
       () => _i393.BookingBloc(gh<_i46.CreateBooking>()),
     );
@@ -169,6 +185,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i648.SignInWithGoogle>(),
         gh<_i872.SignOut>(),
         gh<_i191.GetCurrentUser>(),
+        gh<_i910.SendPasswordReset>(),
+        gh<_i912.SendEmailVerification>(),
+        gh<_i911.ReloadCurrentUser>(),
+        gh<_i913.CompleteGoogleSignUp>(),
         gh<_i1015.AuthRepository>(),
       ),
     );

@@ -30,3 +30,25 @@ class AuthError extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class PasswordResetEmailSent extends AuthState {
+  final String email;
+
+  const PasswordResetEmailSent(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class VerificationEmailSent extends AuthState {
+  const VerificationEmailSent();
+}
+
+class NeedsRoleForGoogleSignUp extends AuthState {
+  final User user;
+
+  const NeedsRoleForGoogleSignUp(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}

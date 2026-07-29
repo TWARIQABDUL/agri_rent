@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../main_shell/main_shell.dart';
+import '../../../../core/services/preferences_service.dart';
+import '../../../../injection_container.dart';
+import '../../../main_shell/role_home.dart';
 import '../bloc/auth_bloc.dart';
+import 'role_selection_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -29,6 +32,26 @@ class _SignUpPageState extends State<SignUpPage> {
   final _passwordController = TextEditingController();
   bool _obscure = true;
   bool _acceptedTerms = false;
+  UserRole _role = UserRole.farmer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-select whichever role was already picked on the Role Selection screen
+    // during onboarding, so a user coming from Splash sees their earlier choice
+    // reflected here.
+    _loadInitialRole();
+  }
+
+  Future<void> _loadInitialRole() async {
+    final saved = await sl<PreferencesService>().getRole();
+    if (!mounted) return;
+    setState(() {
+      _role = saved == PreferencesService.roleOwner
+          ? UserRole.owner
+          : UserRole.farmer;
+    });
+  }
 
   @override
   void dispose() {
@@ -60,7 +83,22 @@ class _SignUpPageState extends State<SignUpPage> {
     return null;
   }
 
-  void _submit() {
+  Future<void> _continueWithGoogle() async {
+    // Persist the toggle value so the data layer can create the Firestore
+    // profile with the picked role in a single write. Skips the post-auth
+    // Role Selection detour that a fresh Google sign-in would otherwise
+    // trigger.
+    final selected = _role == UserRole.owner
+        ? PreferencesService.roleOwner
+        : PreferencesService.roleFarmer;
+    await sl<PreferencesService>().setRole(selected);
+    if (!mounted) return;
+    context.read<AuthBloc>().add(
+      SignInWithGoogleRequested(presetRole: selected),
+    );
+  }
+
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_acceptedTerms) {
       ScaffoldMessenger.of(context)
@@ -70,6 +108,15 @@ class _SignUpPageState extends State<SignUpPage> {
         );
       return;
     }
+    // Persist the picked role BEFORE dispatching sign-up. The data source
+    // reads PreferencesService.getRole() inside signUpWithEmailAndPassword to
+    // decide what to write into the Firestore users doc, so this write has to
+    // land first.
+    final selected = _role == UserRole.owner
+        ? PreferencesService.roleOwner
+        : PreferencesService.roleFarmer;
+    await sl<PreferencesService>().setRole(selected);
+    if (!mounted) return;
     context.read<AuthBloc>().add(
       SignUpWithEmailRequested(
         email: _emailController.text.trim(),
@@ -92,8 +139,10 @@ class _SignUpPageState extends State<SignUpPage> {
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is Authenticated) {
+              // Route via RoleHome so newly-signed-up owners land in OwnerShell,
+              // not the farmer shell.
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const MainShell()),
+                MaterialPageRoute(builder: (_) => const RoleHome()),
                 (route) => false,
               );
             } else if (state is AuthError) {
@@ -138,6 +187,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         const SizedBox(height: 18),
                         _illustration(),
                         const SizedBox(height: 18),
+                        _roleToggle(),
+                        const SizedBox(height: 14),
                         _nameField(),
                         const SizedBox(height: 14),
                         _emailField(),
@@ -149,7 +200,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         _createAccountButton(),
                         const SizedBox(height: 22),
                         _orDivider(),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
+                        _roleHintForGoogle(),
+                        const SizedBox(height: 12),
                         _googleButton(),
                         const SizedBox(height: 22),
                         _signInFooter(),
@@ -298,6 +351,105 @@ class _SignUpPageState extends State<SignUpPage> {
         border: color == _tint
             ? Border.all(color: _green.withValues(alpha: 0.2), width: 1)
             : null,
+      ),
+    );
+  }
+
+  Widget _roleToggle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            'Choose your role',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: _dark,
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: _tint,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              _roleChip(UserRole.farmer, Icons.agriculture, 'Rent', 'Farmer'),
+              _roleChip(
+                UserRole.owner,
+                Icons.home_work_outlined,
+                'List',
+                'Owner',
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _roleChip(UserRole role, IconData icon, String title, String subtitle) {
+    final selected = _role == role;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _role = role),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+          decoration: BoxDecoration(
+            color: selected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(11),
+            border: Border.all(
+              color: selected ? _green : Colors.transparent,
+              width: 1.4,
+            ),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: _green.withValues(alpha: 0.12),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 20,
+                color: selected ? _green : _muted,
+              ),
+              const SizedBox(width: 8),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: selected ? _green : _dark,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: selected ? _green : _muted,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -487,6 +639,29 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Widget _roleHintForGoogle() {
+    final roleLabel = _role == UserRole.owner ? 'Owner' : 'Farmer';
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          text: 'Signing up as ',
+          style: const TextStyle(fontSize: 12, color: _muted),
+          children: [
+            TextSpan(
+              text: roleLabel,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: _green,
+              ),
+            ),
+            const TextSpan(text: ' — change above'),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _googleButton() {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
@@ -494,10 +669,7 @@ class _SignUpPageState extends State<SignUpPage> {
         return SizedBox(
           height: 52,
           child: OutlinedButton.icon(
-            onPressed: loading
-                ? null
-                : () =>
-                      context.read<AuthBloc>().add(SignInWithGoogleRequested()),
+            onPressed: loading ? null : _continueWithGoogle,
             style: OutlinedButton.styleFrom(
               foregroundColor: _dark,
               side: const BorderSide(color: _border, width: 1.5),

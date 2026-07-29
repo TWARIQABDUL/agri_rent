@@ -8,6 +8,7 @@ class UserModel extends User {
     super.displayName,
     super.photoUrl,
     super.role,
+    super.emailVerified,
   });
 
   factory UserModel.fromFirebaseUser(fb.User user, {String? role}) {
@@ -17,6 +18,7 @@ class UserModel extends User {
       displayName: user.displayName,
       photoUrl: user.photoURL,
       role: role,
+      emailVerified: user.emailVerified,
     );
   }
 }
