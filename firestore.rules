@@ -56,13 +56,27 @@ service cloud.firestore {
         && incoming().verified == false
         && incoming().createdAt == request.time;
 
-      // `verified`, `createdAt` and any trust field are absent from the allowed
-      // set, so an update touching one is rejected outright.
+      // Two allowed shapes:
+      //   1. Regular profile updates — role, name, contact fields. `verified`
+      //      is deliberately out of this set, so an ordinary update touching
+      //      it is rejected.
+      //   2. Self-promotion to KYC-verified — only when the auth token itself
+      //      certifies the email is verified (request.auth.token.email_verified).
+      //      The token claim is set by Firebase, not by the client, so the
+      //      client can't lie its way to owner powers.
       allow update: if isSelf(uid)
         && incoming().role in ['owner', 'farmer']
-        && changedKeys().hasOnly([
-          'role', 'displayName', 'email', 'phone', 'district', 'updatedAt'
-        ]);
+        && (
+          changedKeys().hasOnly([
+            'role', 'displayName', 'email', 'phone', 'district', 'updatedAt'
+          ])
+          ||
+          (
+            changedKeys().hasOnly(['verified', 'updatedAt'])
+            && request.auth.token.email_verified == true
+            && incoming().verified == true
+          )
+        );
 
       allow delete: if false;
     }

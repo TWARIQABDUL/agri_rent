@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../main_shell/main_shell.dart';
+import '../../../../core/services/preferences_service.dart';
+import '../../../main_shell/role_home.dart';
 import '../bloc/auth_bloc.dart';
+import 'forgot_password_page.dart';
+import 'role_selection_page.dart';
 import 'sign_up_page.dart';
 
 class SignInPage extends StatefulWidget {
@@ -61,6 +64,27 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  /// Google sign-in from the Sign-In page can't know the role upfront (no
+  /// toggle here), so a brand-new Google account lands in this state.
+  /// Push the same Role Selection screen used elsewhere, then dispatch the
+  /// completion event so the Firestore profile gets written.
+  Future<void> _promptRoleForGoogleSignUp() async {
+    final picked = await Navigator.of(context).push<UserRole>(
+      MaterialPageRoute(builder: (_) => const RoleSelectionPage()),
+    );
+    if (!mounted) return;
+    if (picked == null) {
+      // User backed out — sign them out to leave the app in a clean state
+      // rather than dangling with a Firebase session and no profile.
+      context.read<AuthBloc>().add(SignOutRequested());
+      return;
+    }
+    final role = picked == UserRole.owner
+        ? PreferencesService.roleOwner
+        : PreferencesService.roleFarmer;
+    context.read<AuthBloc>().add(CompleteGoogleSignUpRequested(role));
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -74,10 +98,15 @@ class _SignInPageState extends State<SignInPage> {
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is Authenticated) {
+              // Route via RoleHome so an owner opens OwnerShell and a farmer
+              // opens MainShell. Going straight to MainShell would trap owners
+              // in the farmer workspace.
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const MainShell()),
+                MaterialPageRoute(builder: (_) => const RoleHome()),
                 (route) => false,
               );
+            } else if (state is NeedsRoleForGoogleSignUp) {
+              _promptRoleForGoogleSignUp();
             } else if (state is AuthError) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
@@ -123,7 +152,9 @@ class _SignInPageState extends State<SignInPage> {
                         _emailField(),
                         const SizedBox(height: 14),
                         _passwordField(),
-                        const SizedBox(height: 26),
+                        const SizedBox(height: 10),
+                        _forgotPasswordLink(),
+                        const SizedBox(height: 18),
                         _signInButton(),
                         const SizedBox(height: 22),
                         _orDivider(),
@@ -354,6 +385,32 @@ class _SignInPageState extends State<SignInPage> {
       focusedBorder: border(_green),
       errorBorder: border(Colors.red.shade400),
       focusedErrorBorder: border(Colors.red.shade600),
+    );
+  }
+
+  Widget _forgotPasswordLink() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ForgotPasswordPage(
+              initialEmail: _emailController.text.trim(),
+            ),
+          ),
+        ),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 4),
+          child: Text(
+            'Forgot password?',
+            style: TextStyle(
+              color: _green,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ),
     );
   }
 

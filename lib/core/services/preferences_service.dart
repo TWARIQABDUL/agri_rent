@@ -66,6 +66,16 @@ class PreferencesService {
     await (await _prefs).setBool(_kSmsNotifications, enabled);
   }
 
+  /// Clears prefs that are tied to the signed-in account (currently just
+  /// `role`). Device-level prefs (language, currency, notification toggles)
+  /// are left alone so signing out doesn't reset the user's chosen locale.
+  Future<void> clearAccountScoped() async {
+    final p = await _prefs;
+    await p.remove(_kRole);
+  }
+
+  /// Wipes every pref this service knows about. Only use for full app resets
+  /// or tests — sign-out should call [clearAccountScoped] instead.
   Future<void> clear() async {
     final p = await _prefs;
     await Future.wait([
