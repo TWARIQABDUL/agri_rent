@@ -182,7 +182,7 @@ flutter build apk --debug
 Validated on July 29, 2026:
 
 - static analysis: no issues;
-- automated tests: **87 passed**, covering units, repositories, in-memory
+- automated tests: **82 passed**, covering units, repositories, in-memory
   Firebase integration, widgets, navigation, and golden screenshots;
 - line coverage: **85.04%** (**4,690 / 5,515** executable lines); and
 - Android debug APK build: successful.
@@ -194,4 +194,8 @@ evidence. Click either image to open the full-resolution result.
 
 | Flutter analysis | Tests and line coverage |
 | :---: | :---: |
-| <a href="docs/reports/flutter_analyze.png"><img src="docs/reports/flutter_analyze.png" width="390" alt="Flutter analyze terminal result showing no issues found"></a> | <a href="docs/reports/flutter_coverage.png"><img src="docs/reports/flutter_coverage.png" width="390" alt="Flutter test coverage result showing 87 passing tests and 85.04 percent line coverage"></a> |
+| <a href="docs/reports/flutter_analyze.png"><img src="docs/reports/flutter_analyze.png" width="390" alt="Flutter analyze terminal result showing no issues found"></a> | <a href="docs/reports/flutter_coverage.png"><img src="docs/reports/flutter_coverage.png" width="390" alt="Recorded Flutter test run showing all tests passing and 85.04 percent line coverage"></a> |
+
+The saved coverage capture records the pre-consolidation 87-case run. Final
+verification of this branch executes 82 named test cases with the same
+**4,690 / 5,515 (85.04%)** line coverage.
