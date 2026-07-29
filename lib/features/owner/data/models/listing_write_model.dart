@@ -5,7 +5,7 @@ import '../../domain/entities/listing_draft.dart';
 
 /// Turns a [ListingDraft] into the payloads the `equipment` collection accepts.
 ///
-/// The split matters: `create` seeds the fields the owner does not control
+/// The split matters: `create` initializes fields the owner does not control
 /// (status, rating, booking count, created timestamp), while `update` leaves
 /// every one of them untouched. The security rules reject an update that tries
 /// to move them, so keeping them out of the map here is what lets a legitimate

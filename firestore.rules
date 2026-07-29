@@ -44,6 +44,42 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys();
     }
 
+    function walletAfter(uid) {
+      return getAfter(
+        /databases/$(database)/documents/wallets/$(uid)
+      ).data;
+    }
+
+    function walletActivityAfter(uid, transactionId) {
+      return getAfter(
+        /databases/$(database)/documents/wallets/$(uid)/transactions/$(transactionId)
+      ).data;
+    }
+
+    function validPaidRental(rentalId) {
+      return incoming().paymentStatus == 'paid'
+        && incoming().walletTransactionId is string
+        && incoming().walletTransactionId.size() > 0
+        && walletAfter(incoming().renterId).lastTransactionId
+          == incoming().walletTransactionId
+        && walletActivityAfter(
+          incoming().renterId,
+          incoming().walletTransactionId
+        ).type == 'rentalPayment'
+        && walletActivityAfter(
+          incoming().renterId,
+          incoming().walletTransactionId
+        ).rentalId == rentalId
+        && walletActivityAfter(
+          incoming().renterId,
+          incoming().walletTransactionId
+        ).amount == -incoming().totalAmount
+        && walletActivityAfter(
+          incoming().renterId,
+          incoming().walletTransactionId
+        ).balanceAfter == walletAfter(incoming().renterId).balance;
+    }
+
     // ------------------------------------------------------------------- users
 
     match /users/{uid} {
@@ -79,6 +115,18 @@ service cloud.firestore {
         );
 
       allow delete: if false;
+
+      match /favorites/{equipmentId} {
+        allow read: if isSelf(uid);
+
+        allow create: if isSelf(uid)
+          && incoming().userId == uid
+          && incoming().equipmentId == equipmentId
+          && incoming().createdAt == request.time;
+
+        allow update: if false;
+        allow delete: if isSelf(uid);
+      }
     }
 
     // --------------------------------------------------------------- equipment
@@ -136,9 +184,62 @@ service cloud.firestore {
           'location', 'image', 'status', 'updatedAt'
         ]);
 
-      // Listings are paused, never deleted, so the rental history behind them
-      // stays intact.
+      // Listings are paused, never deleted, so rental history stays intact.
       allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------- wallets
+
+    match /wallets/{uid} {
+      allow read: if isSelf(uid);
+
+      allow create: if isSelf(uid)
+        && incoming().userId == uid
+        && incoming().balance == 0
+        && incoming().currency == 'RWF'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      // Every balance mutation must be part of the same atomic write as its
+      // immutable ledger record. Checkout additionally links that ledger entry
+      // to the new rental in validPaidRental().
+      allow update: if isSelf(uid)
+        && incoming().userId == resource.data.userId
+        && incoming().currency == resource.data.currency
+        && incoming().balance is number
+        && incoming().balance >= 0
+        && incoming().lastTransactionId is string
+        && incoming().updatedAt == request.time
+        && changedKeys().hasOnly([
+          'balance', 'lastTransactionId', 'updatedAt'
+        ])
+        && walletActivityAfter(uid, incoming().lastTransactionId).userId == uid
+        && walletActivityAfter(uid, incoming().lastTransactionId).amount is number
+        && walletActivityAfter(uid, incoming().lastTransactionId).amount != 0
+        && walletActivityAfter(uid, incoming().lastTransactionId).balanceAfter
+          == incoming().balance
+        && incoming().balance == resource.data.balance
+          + walletActivityAfter(uid, incoming().lastTransactionId).amount;
+
+      allow delete: if false;
+
+      match /transactions/{transactionId} {
+        allow read: if isSelf(uid);
+
+        allow create: if isSelf(uid)
+          && incoming().userId == uid
+          && incoming().type in ['topUp', 'rentalPayment']
+          && incoming().amount is number
+          && incoming().amount != 0
+          && incoming().balanceAfter is number
+          && incoming().balanceAfter >= 0
+          && incoming().title is string
+          && incoming().createdAt == request.time
+          && walletAfter(uid).lastTransactionId == transactionId
+          && walletAfter(uid).balance == incoming().balanceAfter;
+
+        allow update, delete: if false;
+      }
     }
 
     // ----------------------------------------------------------------- rentals
@@ -156,18 +257,21 @@ service cloud.firestore {
         && incoming().equipmentId is string
         && incoming().status == 'pending'
         && incoming().paidOut == false
+        && validPaidRental(rentalId)
         && incoming().totalAmount is number
         && incoming().totalAmount > 0
         && incoming().startDate is timestamp
         && incoming().endDate is timestamp
         && incoming().endDate >= incoming().startDate
-        && incoming().createdAt == request.time;
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
 
       // The owner answers and advances the rental; the renter may only walk
       // away from a request nobody has answered yet. Neither side can touch
       // `paidOut` or `totalAmount`.
       allow update: if isSignedIn()
         && changedKeys().hasOnly(['status', 'updatedAt'])
+        && incoming().updatedAt == request.time
         && (
           (resource.data.ownerId == request.auth.uid
             && incoming().status in ['accepted', 'declined', 'active', 'completed'])
@@ -177,7 +281,9 @@ service cloud.firestore {
             && incoming().status == 'cancelled')
         );
 
-      allow delete: if false;
+      allow delete: if isSignedIn()
+        && resource.data.renterId == request.auth.uid
+        && resource.data.status == 'pending';
     }
 
     // Anything not matched above is denied.
