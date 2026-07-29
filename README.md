@@ -10,7 +10,6 @@ AgriRent is a cross-platform mobile application designed to connect farmers with
 - **Backend:** Firebase (Firestore)
 
 ## Database Schema (Firestore)
-
 To ensure consistency and help other developers understand the data structure, here is the current schema used in our Firestore database.
 
 ### Collection: `equipment`
