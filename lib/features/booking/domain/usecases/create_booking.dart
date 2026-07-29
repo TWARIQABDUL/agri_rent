@@ -9,6 +9,7 @@ import 'calculate_rental_cost.dart';
 class CreateBookingParams {
   final Equipment equipment;
   final String farmerId;
+  final String farmerName;
   final String rateType;
   final double rate;
   final int duration;
@@ -17,6 +18,7 @@ class CreateBookingParams {
   CreateBookingParams({
     required this.equipment,
     required this.farmerId,
+    required this.farmerName,
     required this.rateType,
     required this.rate,
     required this.duration,
@@ -43,7 +45,9 @@ class CreateBooking implements UseCase<Booking, CreateBookingParams> {
       equipmentId: params.equipment.id,
       equipmentName: params.equipment.name,
       equipmentCategory: params.equipment.category,
+      equipmentImage: params.equipment.image,
       farmerId: params.farmerId,
+      farmerName: params.farmerName,
       ownerId: params.equipment.ownerId,
       ownerName: params.equipment.ownerName,
       rateType: params.rateType,

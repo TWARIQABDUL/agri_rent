@@ -7,7 +7,9 @@ class BookingModel extends Booking {
     required super.equipmentId,
     required super.equipmentName,
     required super.equipmentCategory,
+    required super.equipmentImage,
     required super.farmerId,
+    required super.farmerName,
     required super.ownerId,
     required super.ownerName,
     required super.rateType,
@@ -19,15 +21,23 @@ class BookingModel extends Booking {
     required super.total,
     required super.status,
     required super.createdAt,
+    super.walletTransactionId,
+    super.paymentStatus,
   });
 
-  factory BookingModel.fromEntity(Booking booking) {
+  factory BookingModel.fromEntity(
+    Booking booking, {
+    String? id,
+    String? walletTransactionId,
+  }) {
     return BookingModel(
-      id: booking.id,
+      id: id ?? booking.id,
       equipmentId: booking.equipmentId,
       equipmentName: booking.equipmentName,
       equipmentCategory: booking.equipmentCategory,
+      equipmentImage: booking.equipmentImage,
       farmerId: booking.farmerId,
+      farmerName: booking.farmerName,
       ownerId: booking.ownerId,
       ownerName: booking.ownerName,
       rateType: booking.rateType,
@@ -39,6 +49,8 @@ class BookingModel extends Booking {
       total: booking.total,
       status: booking.status,
       createdAt: booking.createdAt,
+      walletTransactionId: walletTransactionId ?? booking.walletTransactionId,
+      paymentStatus: booking.paymentStatus,
     );
   }
 
@@ -49,9 +61,11 @@ class BookingModel extends Booking {
       equipmentId: data['equipmentId'] ?? '',
       equipmentName: data['equipmentName'] ?? '',
       equipmentCategory: data['equipmentCategory'] ?? '',
+      equipmentImage: data['equipmentImage'] ?? '',
       // Wire field is `renterId` (deployed security rules' vocabulary);
       // domain entity keeps `farmerId` since that's this app's own term.
       farmerId: data['renterId'] ?? '',
+      farmerName: data['renterName'] ?? 'Farmer',
       ownerId: data['ownerId'] ?? '',
       ownerName: data['ownerName'] ?? '',
       rateType: data['rateType'] ?? 'day',
@@ -63,6 +77,8 @@ class BookingModel extends Booking {
       total: (data['totalAmount'] as num?)?.toDouble() ?? 0.0,
       status: data['status'] ?? 'pending',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      walletTransactionId: data['walletTransactionId'] ?? '',
+      paymentStatus: data['paymentStatus'] ?? BookingPaymentStatus.paid,
     );
   }
 
@@ -78,6 +94,8 @@ class BookingModel extends Booking {
       'equipmentId': equipmentId,
       'status': status,
       'paidOut': false,
+      'paymentStatus': paymentStatus,
+      'walletTransactionId': walletTransactionId,
       'totalAmount': total,
       'startDate': Timestamp.fromDate(startDate),
       'endDate': Timestamp.fromDate(startDate.add(_durationSpan())),
@@ -85,6 +103,8 @@ class BookingModel extends Booking {
       'updatedAt': FieldValue.serverTimestamp(),
       'equipmentName': equipmentName,
       'equipmentCategory': equipmentCategory,
+      'equipmentImage': equipmentImage,
+      'renterName': farmerName,
       'ownerName': ownerName,
       'rateType': rateType,
       'rate': rate,

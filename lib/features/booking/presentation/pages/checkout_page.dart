@@ -3,10 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/money.dart';
+import '../../../wallet/presentation/cubit/wallet_cubit.dart';
+import '../../../wallet/presentation/pages/top_up_wallet_page.dart';
 import '../../domain/usecases/calculate_rental_cost.dart';
 import '../../domain/usecases/create_booking.dart';
 import '../bloc/booking_bloc.dart';
 import '../widgets/rate_option_selector.dart';
+import 'insufficient_balance_page.dart';
+import 'payment_success_page.dart';
 
 class CheckoutPage extends StatelessWidget {
   final CreateBookingParams params;
@@ -15,7 +20,22 @@ class CheckoutPage extends StatelessWidget {
 
   const CheckoutPage({super.key, required this.params});
 
-  void _submit(BuildContext context) {
+  void _submit(
+    BuildContext context, {
+    required double amountDue,
+    required double availableBalance,
+  }) {
+    if (availableBalance < amountDue) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => InsufficientBalancePage(
+            amountDue: amountDue,
+            availableBalance: availableBalance,
+          ),
+        ),
+      );
+      return;
+    }
     context.read<BookingBloc>().add(SubmitBookingRequest(params));
   }
 
@@ -67,23 +87,20 @@ class CheckoutPage extends StatelessWidget {
         child: BlocConsumer<BookingBloc, BookingState>(
           listener: (context, state) {
             if (state is BookingSuccess) {
-              debugPrint(
-                '[AgriRent] Booking created in Firestore -> '
-                'id: ${state.booking.id}, '
-                'equipment: ${state.booking.equipmentName}, '
-                'farmerId: ${state.booking.farmerId}, '
-                'status: ${state.booking.status}, '
-                'total: ${state.booking.total}',
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => PaymentSuccessPage(booking: state.booking),
+                ),
               );
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: AppColors.primaryDark,
-                  content: Text(
-                    'Booking request sent! You\'ll be notified once the owner responds.',
+            } else if (state is BookingInsufficientBalance) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => InsufficientBalancePage(
+                    amountDue: state.amountDue,
+                    availableBalance: state.availableBalance,
                   ),
                 ),
               );
-              Navigator.of(context).popUntil((route) => route.isFirst);
             } else if (state is BookingFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -95,6 +112,7 @@ class CheckoutPage extends StatelessWidget {
           },
           builder: (context, state) {
             final isSubmitting = state is BookingSubmitting;
+            final walletState = context.watch<WalletCubit>().state;
             return Column(
               children: [
                 Expanded(
@@ -205,6 +223,114 @@ class CheckoutPage extends StatelessWidget {
                             ],
                           ),
                         ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Payment method',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: AppColors.green,
+                              width: 1.3,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.greenTint,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.account_balance_wallet_outlined,
+                                  color: AppColors.green,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'AgriRent Wallet',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    Text(
+                                      walletState.isLoading
+                                          ? 'Loading balance…'
+                                          : 'Balance: ${Money.format(walletState.balance)}',
+                                      key: const ValueKey(
+                                        'checkout-wallet-balance',
+                                      ),
+                                      style: const TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(
+                                Icons.radio_button_checked,
+                                color: AppColors.green,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const TopUpWalletPage(),
+                            ),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 13,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.outline),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: AppColors.green,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Top up your wallet',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -232,7 +358,13 @@ class CheckoutPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      onPressed: isSubmitting ? null : () => _submit(context),
+                      onPressed: isSubmitting || walletState.isLoading
+                          ? null
+                          : () => _submit(
+                              context,
+                              amountDue: breakdown.total,
+                              availableBalance: walletState.balance,
+                            ),
                       child: isSubmitting
                           ? const SizedBox(
                               height: 20,
@@ -243,7 +375,7 @@ class CheckoutPage extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              'Confirm Request to Rent • RWF ${breakdown.total.toInt()}',
+                              'Pay ${Money.format(breakdown.total)}  →',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -266,13 +398,16 @@ class CheckoutPage extends StatelessWidget {
       color: isTotal ? AppColors.textPrimary : AppColors.textSecondary,
     );
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: style),
-        Text(
-          value,
-          style: style.copyWith(
-            color: isTotal ? AppColors.primaryDark : AppColors.textPrimary,
+        Expanded(child: Text(label, style: style)),
+        const SizedBox(width: 12),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: style.copyWith(
+              color: isTotal ? AppColors.primaryDark : AppColors.textPrimary,
+            ),
           ),
         ),
       ],

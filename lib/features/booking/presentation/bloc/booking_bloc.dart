@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/booking.dart';
 import '../../domain/usecases/create_booking.dart';
+import '../../../wallet/domain/exceptions/wallet_exception.dart';
 
 part 'booking_event.dart';
 part 'booking_state.dart';
@@ -18,6 +19,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       try {
         final booking = await createBooking(event.params);
         emit(BookingSuccess(booking));
+      } on InsufficientWalletBalanceException catch (error) {
+        emit(
+          BookingInsufficientBalance(
+            amountDue: error.amountDue,
+            availableBalance: error.availableBalance,
+          ),
+        );
       } catch (e) {
         emit(BookingFailure(e.toString()));
       }
