@@ -7,10 +7,10 @@ import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/pages/profile_page.dart';
 import '../../../auth/presentation/pages/splash_page.dart';
+import '../../../bookings/presentation/pages/rental_requests_page.dart';
 import '../bloc/owner_dashboard_bloc.dart';
 import '../bloc/owner_listings_bloc.dart';
 import '../widgets/owner_bottom_nav.dart';
-import '../widgets/owner_states.dart';
 import 'earnings_page.dart';
 import 'my_listings_page.dart';
 import 'owner_dashboard_page.dart';
@@ -105,7 +105,7 @@ class _OwnerShellViewState extends State<_OwnerShellView> {
             onOpenTab: _openTab,
           ),
           MyListingsPage(ownerId: ownerId),
-          const _RequestsTab(),
+          RentalRequestsPage(ownerId: ownerId),
           EarningsPage(ownerId: ownerId),
           const ProfilePage(),
         ],
@@ -119,58 +119,6 @@ class _OwnerShellViewState extends State<_OwnerShellView> {
             currentIndex: _tab,
             onTap: _openTab,
             pendingRequestCount: pending,
-          );
-        },
-      ),
-    );
-  }
-}
-
-/// Placeholder for the rental requests inbox, which ships with the rentals
-/// module. The counter is real so an owner is not left unaware of waiting
-/// requests.
-class _RequestsTab extends StatelessWidget {
-  const _RequestsTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        foregroundColor: AppColors.ink,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Rental Requests',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-        ),
-        centerTitle: false,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: AppColors.outline),
-        ),
-      ),
-      body: BlocBuilder<OwnerDashboardBloc, OwnerDashboardState>(
-        builder: (context, state) {
-          final pending = state is OwnerDashboardLoaded
-              ? state.summary.pendingRequestCount
-              : 0;
-
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(20, 40, 20, 120),
-            children: [
-              EmptyState(
-                icon: Icons.inbox_outlined,
-                title: pending == 0
-                    ? 'No requests waiting'
-                    : '$pending request${pending == 1 ? '' : 's'} waiting',
-                message:
-                    'Reviewing, accepting and declining requests is delivered '
-                    'by the rentals module.',
-              ),
-            ],
           );
         },
       ),

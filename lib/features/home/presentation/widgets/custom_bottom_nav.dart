@@ -4,11 +4,19 @@ import '../../../../core/theme/app_colors.dart';
 class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final List<IconData> icons;
 
   const CustomBottomNav({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.icons = const [
+      Icons.home,
+      Icons.book_online,
+      Icons.account_balance_wallet,
+      Icons.favorite_border,
+      Icons.person_outline,
+    ],
   });
 
   @override
@@ -22,13 +30,10 @@ class CustomBottomNav extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildNavItem(Icons.home, 0),
-          _buildNavItem(Icons.book_online, 1), // Bookings placeholder icon
-          _buildNavItem(Icons.account_balance_wallet, 2),
-          _buildNavItem(Icons.favorite_border, 3),
-          _buildNavItem(Icons.person_outline, 4),
-        ],
+        children: List.generate(
+          icons.length,
+          (index) => _buildNavItem(icons[index], index),
+        ),
       ),
     );
   }
