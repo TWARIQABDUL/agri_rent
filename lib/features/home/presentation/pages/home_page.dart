@@ -297,9 +297,8 @@ class _HomePageState extends State<HomePage> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => EquipmentDetailPage(
-                                    equipment: equipment,
-                                  ),
+                                  builder: (_) =>
+                                      EquipmentDetailPage(equipment: equipment),
                                 ),
                               );
                             },

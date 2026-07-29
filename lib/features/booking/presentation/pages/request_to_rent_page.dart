@@ -158,7 +158,8 @@ class _RequestToRentPageState extends State<RequestToRentPage> {
                       color: AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: widget.equipment.category.toLowerCase().contains(
+                    child:
+                        widget.equipment.category.toLowerCase().contains(
                           'tractor',
                         )
                         ? Padding(

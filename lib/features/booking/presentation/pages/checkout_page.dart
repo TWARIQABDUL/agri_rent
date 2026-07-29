@@ -180,7 +180,10 @@ class CheckoutPage extends StatelessWidget {
                                 ],
                               ),
                               const Divider(height: 24),
-                              _row('Duration', '${params.duration} $unit${params.duration > 1 ? 's' : ''}'),
+                              _row(
+                                'Duration',
+                                '${params.duration} $unit${params.duration > 1 ? 's' : ''}',
+                              ),
                               const SizedBox(height: 8),
                               _row('Start date', formattedDate),
                               const SizedBox(height: 8),
@@ -241,7 +244,9 @@ class CheckoutPage extends StatelessWidget {
                             )
                           : Text(
                               'Confirm Request to Rent • RWF ${breakdown.total.toInt()}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                     ),
                   ),
