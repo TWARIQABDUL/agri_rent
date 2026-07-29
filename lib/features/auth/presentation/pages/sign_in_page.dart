@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../main_shell/main_shell.dart';
+import '../../../main_shell/role_home.dart';
 import '../bloc/auth_bloc.dart';
 import 'sign_up_page.dart';
 
@@ -75,7 +75,7 @@ class _SignInPageState extends State<SignInPage> {
           listener: (context, state) {
             if (state is Authenticated) {
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const MainShell()),
+                MaterialPageRoute(builder: (_) => const RoleHome()),
                 (route) => false,
               );
             } else if (state is AuthError) {
@@ -255,26 +255,10 @@ class _SignInPageState extends State<SignInPage> {
                   size: 38,
                 ),
               ),
-              Positioned(
-                top: 18,
-                left: 40,
-                child: _dot(14, _greenDeep),
-              ),
-              Positioned(
-                top: 34,
-                right: 26,
-                child: _dot(16, _accent),
-              ),
-              Positioned(
-                right: 22,
-                top: 88,
-                child: _dot(10, _accentSoft),
-              ),
-              Positioned(
-                bottom: 26,
-                left: 32,
-                child: _dot(12, _tint),
-              ),
+              Positioned(top: 18, left: 40, child: _dot(14, _greenDeep)),
+              Positioned(top: 34, right: 26, child: _dot(16, _accent)),
+              Positioned(right: 22, top: 88, child: _dot(10, _accentSoft)),
+              Positioned(bottom: 26, left: 32, child: _dot(12, _tint)),
             ],
           ),
         ),

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../main_shell/main_shell.dart';
+import '../../../main_shell/role_home.dart';
 import '../bloc/auth_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -93,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
           listener: (context, state) {
             if (state is Authenticated) {
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const MainShell()),
+                MaterialPageRoute(builder: (_) => const RoleHome()),
                 (route) => false,
               );
             } else if (state is AuthError) {
