@@ -125,12 +125,12 @@ class RequestDetailPage extends StatelessWidget {
           _detailsCard([
             _infoRow('Rental subtotal', formatRwf(booking.subtotal)),
             _infoRow(
-              'Platform fee (10%)',
-              '- ${formatRwf(booking.subtotal * 0.10)}',
+              'Platform fee (5%)',
+              '- ${formatRwf(booking.subtotal * 0.05)}',
             ),
             _infoRow(
               'You receive',
-              formatRwf(booking.subtotal * 0.90),
+              formatRwf(booking.subtotal * 0.95),
               valueColor: bookingGreen,
             ),
           ]),

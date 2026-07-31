@@ -81,7 +81,23 @@ class _OwnerShellView extends StatefulWidget {
 class _OwnerShellViewState extends State<_OwnerShellView> {
   int _tab = 0;
 
-  void _openTab(int index) => setState(() => _tab = index);
+  void _openTab(int index) {
+    setState(() => _tab = index);
+
+    // Refresh dashboard data when switching back from the rental-requests tab
+    // so that earnings and counters reflect recently accepted / declined
+    // bookings without waiting for a manual pull-to-refresh.
+    if ((index == 0 || index == 3) && context.mounted) {
+      context.read<OwnerDashboardBloc>().add(
+        LoadOwnerDashboard(
+          ownerId: widget.user.id,
+          displayName: widget.user.displayName,
+          email: widget.user.email,
+          silent: true,
+        ),
+      );
+    }
+  }
 
   String get _ownerName {
     final name = widget.user.displayName?.trim();

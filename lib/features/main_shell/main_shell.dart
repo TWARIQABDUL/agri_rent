@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../auth/presentation/bloc/auth_bloc.dart';
 import '../auth/presentation/pages/profile_page.dart';
 import '../auth/presentation/pages/splash_page.dart';
+import '../bookings/presentation/bloc/booking_bloc.dart';
 import '../bookings/presentation/pages/my_bookings_page.dart';
 import '../favorites/presentation/cubit/favorites_cubit.dart';
 import '../favorites/presentation/pages/favorites_page.dart';
@@ -64,14 +65,25 @@ class _MainShellState extends State<MainShell> {
             const ProfilePage(),
           ];
 
-          return BlocBuilder<FarmerNavigationCubit, int>(
-            builder: (context, tab) => Scaffold(
-              extendBody: true,
-              backgroundColor: AppColors.background,
-              body: IndexedStack(index: tab, children: pages),
-              bottomNavigationBar: CustomBottomNav(
-                currentIndex: tab,
-                onTap: context.read<FarmerNavigationCubit>().select,
+          return BlocListener<FarmerNavigationCubit, int>(
+            listenWhen: (_, current) => current == 1,
+            listener: (context, _) {
+              final auth = context.read<AuthBloc>().state;
+              if (auth is Authenticated) {
+                context.read<BookingBloc>().add(
+                  WatchFarmerBookingsRequested(auth.user.id),
+                );
+              }
+            },
+            child: BlocBuilder<FarmerNavigationCubit, int>(
+              builder: (context, tab) => Scaffold(
+                extendBody: true,
+                backgroundColor: AppColors.background,
+                body: IndexedStack(index: tab, children: pages),
+                bottomNavigationBar: CustomBottomNav(
+                  currentIndex: tab,
+                  onTap: context.read<FarmerNavigationCubit>().select,
+                ),
               ),
             ),
           );
