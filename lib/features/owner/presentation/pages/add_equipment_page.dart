@@ -449,7 +449,7 @@ class _AddEquipmentPageState extends State<AddEquipmentPage> {
   Future<void> _editPhotoLink(ListingDraft draft) async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    
+
     if (image == null || !mounted) return;
 
     // Show loading dialog
@@ -465,21 +465,25 @@ class _AddEquipmentPageState extends State<AddEquipmentPage> {
       final bytes = await image.readAsBytes();
       final fileExtension = image.name.split('.').last.toLowerCase();
       // Put the file inside an "equipment" folder to see if RLS policies require a folder structure
-      final fileName = 'equipment/${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
-      
+      final fileName =
+          'equipment/${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+
       String mimeType = 'image/jpeg';
-      if (fileExtension == 'png') mimeType = 'image/png';
-      else if (fileExtension == 'gif') mimeType = 'image/gif';
-      else if (fileExtension == 'webp') mimeType = 'image/webp';
+      if (fileExtension == 'png')
+        mimeType = 'image/png';
+      else if (fileExtension == 'gif')
+        mimeType = 'image/gif';
+      else if (fileExtension == 'webp')
+        mimeType = 'image/webp';
 
       await Supabase.instance.client.storage
           .from('documents')
           .uploadBinary(
-            fileName, 
+            fileName,
             bytes,
             fileOptions: FileOptions(contentType: mimeType),
           );
-          
+
       final publicUrl = Supabase.instance.client.storage
           .from('documents')
           .getPublicUrl(fileName);
